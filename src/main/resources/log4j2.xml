@@ -4,12 +4,14 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n"/>
     </Console>
-    <!--  File name="EventDateQCLog" fileName="event_date_qc.log" append="false">
+    <File name="BDQTestRunnerLog" fileName="bdqtestrunner.log" append="false">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n"/>
-    </File -->    
+    </File>    
   </Appenders>
   <Loggers>
-    <Logger name="edu.filteredpush.qc.bdqtestrunner" level="WARN" />
+    <Logger name="org.filteredpush.qc.bdqtestrunner" level="DEBUG" >
+      <AppenderRef ref="BDQTestRunnerLog"/>
+    </Logger>
     <Root level="WARN">
       <AppenderRef ref="Console"/>
     </Root>

@@ -1,4 +1,6 @@
 output.csv
+bdqtestrunner.log
+test_run_output.txt
 .classpath
 .project
 .settings/

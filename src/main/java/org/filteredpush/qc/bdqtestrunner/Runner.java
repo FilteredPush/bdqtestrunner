@@ -17,16 +17,32 @@
  */
 package org.filteredpush.qc.bdqtestrunner;
 
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Runner, run tests on TDWG BDQ TG2 Test implementations.
  * 
  * @author mole
  *
  */
-public class Runner 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Not Yet Implemented" );
+public class Runner {
+
+	private static final Log logger = LogFactory.getLog(Runner.class);
+	
+	public static void main( String[] args ) {
+		
+		logger.debug("Starting");
+        
+		try {
+			TestRunner testRunner = new TestRunner();
+			testRunner.runTests();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+		}
+    	
+    	System.out.println("Done");
     }
 }
