@@ -45,6 +45,8 @@ import org.datakurator.ffdq.annotations.ActedUpon;
 import org.datakurator.ffdq.annotations.Consulted;
 import org.datakurator.ffdq.annotations.Provides;
 import org.datakurator.ffdq.api.DQResponse;
+import org.datakurator.ffdq.api.ResultValue;
+import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 
@@ -82,9 +84,9 @@ public class TestRunner {
 
 	public boolean runTests() {
 		boolean result = false;
-		
+
 		try {
-			
+
 			CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
 			Map<String,Integer> header = records.getHeaderMap();
 			int line = 2; // first line in spreadsheet, header is 1.
@@ -96,70 +98,131 @@ public class TestRunner {
 				String label = record.get("Label");
 				String expectedStatus = record.get("Response.Status");
 				String expectedResult = record.get("Response.Result");
-				
+
 				Class cls = DwCOtherDateDQ.class;
 				Object instance = cls.getDeclaredConstructor().newInstance();
 				for (Method javaMethod : cls.getMethods()) {
 					for (Annotation annotation : javaMethod.getAnnotations()) {
-		                if (annotation instanceof Provides) {
-		                	String foundGuid = ((Provides) annotation).value();
-		                	if (foundGuid.equals(GUID) || "urn:uuid:".concat(foundGuid).equals(GUID)) {
-		                		logger.debug("Found implementation for: " + GUID);
-		                		List<String> paramValues = new ArrayList<String>();
-		                        for (Parameter parameter : javaMethod.getParameters()) {
-		                        	
-		                            for (Annotation parAnnotation : parameter.getAnnotations()) {
-		                            	String parValue = null;
-		                                if (parAnnotation instanceof ActedUpon) {
-		                                	logger.debug(parAnnotation.toString());
-		                                	parValue = record.get( ((ActedUpon)parAnnotation).value() );
-		                                	logger.debug(parValue);
-		                                	paramValues.add(parValue);
-		                                } else if (parAnnotation instanceof Consulted) {
-		                                	logger.debug(parAnnotation.toString());
-		                                	parValue = record.get( ((Consulted)parAnnotation).value() );
-		                                	logger.debug(parValue);
-		                                	paramValues.add(parValue);
-		                                }
-		                            }
-		                        }
-		                        try {
-		                        	DQResponse<ComplianceValue> retval = 
-		                        			(DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-		                        	logger.debug(retval.getResultState().getLabel());
-		                        	logger.debug(retval.getValue());
-		                        	logger.debug(retval.getComment());
-		                        	if (expectedStatus.equals(retval.getResultState().getLabel()) && (
-		                        			expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
-		                        			expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
-		                        			expectedResult.equals(retval.getValue().getLabel())) 
-		                        	) {
-		                        		StringBuilder message = new StringBuilder().append(lineNumber).append(" Pass");
-		                        		logger.debug(message);
-		                        		outFileWriter.write(message.toString());
-		                        		outFileWriter.write("\n");
-		                        	} else { 
-		                        		StringBuilder message = new StringBuilder().append(lineNumber).append(" Fail got ").append(retval.getResultState().getLabel()).append(" expected ").append(expectedStatus );
-		                        		logger.debug(retval.getResultState().getLabel());
-		                        		logger.debug(retval.getValue());
-		                        		logger.debug(retval.getComment());
-		                        		logger.debug(message);
-		                        		outFileWriter.write(message.toString());
-		                        		outFileWriter.write("\n");
-		                        	}
+						if (annotation instanceof Provides) {
+							String foundGuid = ((Provides) annotation).value();
+							if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
+								logger.debug("Found implementation for: " + GUID);
+								List<String> paramValues = new ArrayList<String>();
+								for (Parameter parameter : javaMethod.getParameters()) {
+
+									for (Annotation parAnnotation : parameter.getAnnotations()) {
+										String parValue = null;
+										if (parAnnotation instanceof ActedUpon) {
+											logger.debug(parAnnotation.toString());
+											parValue = record.get( ((ActedUpon)parAnnotation).value() );
+											logger.debug(parValue);
+											paramValues.add(parValue);
+										} else if (parAnnotation instanceof Consulted) {
+											logger.debug(parAnnotation.toString());
+											parValue = record.get( ((Consulted)parAnnotation).value() );
+											logger.debug(parValue);
+											paramValues.add(parValue);
+										}
+									}
+								}
+								try {
+									String resultStatus = "";
+									String resultValue = "";
+									String resultComment = "";
+									boolean doComparison = false;
+									if (label.startsWith("VALIDATION_")) { 
+										DQResponse<ComplianceValue> retval = null;
+										if (paramValues.size()==1) { 
+											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
+										} else if (paramValues.size()==2) { 
+											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+										} else if (paramValues.size()==3) { 
+											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
+										} else if (paramValues.size()==4) { 
+											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(2));
+										}
+										if (retval!=null) { 
+											resultStatus = retval.getResultState().getLabel();
+											if (retval.getValue()!=null) { 
+												resultValue = retval.getValue().getLabel();
+											} else { 
+												resultValue = "";
+											}
+											resultComment = retval.getComment();
+											doComparison = true;
+										}
+									} else if (label.startsWith("AMENDMENT_")) { 
+										try { 
+											DQResponse<AmendmentValue> retval = null;
+											if (paramValues.size()==1) { 
+												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0));
+											} else if (paramValues.size()==2) { 
+												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+											} else if (paramValues.size()==3) { 
+												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
+											} else if (paramValues.size()==4) { 
+												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(2));
+											}
+											if (retval!=null) { 
+												resultStatus = retval.getResultState().getLabel();
+												if (retval.getValue()!=null) { 
+													resultValue = retval.getValue().toString();
+												} else {
+													resultValue = "";
+												}
+												resultComment = retval.getComment();
+												doComparison = true;
+											}
+										} catch (IndexOutOfBoundsException e) { 
+											logger.debug(e.getMessage());
+											// TODO: Error in parameter binding? 
+										}
+									} else if (label.startsWith("MEASURE_")) { 
+										// TODO: Handle CompletenessValue and NumericalValue
+										DQResponse<ResultValue> retval = 
+												(DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+										resultStatus = retval.getResultState().getLabel();
+										resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+										resultComment = retval.getComment();
+										doComparison = true;
+									}
+									if (doComparison) { 
+										// TODO: Handle different order of terms in amendment results.
+										if (expectedStatus.equals(resultStatus) && (
+												expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
+												expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
+												expectedResult.equals(resultValue)) 
+												) {
+											StringBuilder message = new StringBuilder().append(lineNumber).append(" Pass");
+											logger.debug(message);
+											outFileWriter.write(message.toString());
+											outFileWriter.write("\n");
+										} else { 
+											StringBuilder message = new StringBuilder().append(lineNumber).append(" Fail got ").append(resultStatus).append(" expected ").append(expectedStatus );
+											logger.debug(resultStatus);
+											logger.debug(resultValue);
+											logger.debug(resultComment);
+											logger.debug(message);
+											outFileWriter.write(message.toString());
+											outFileWriter.write("\n");
+										}
+									} else { 
+										StringBuilder message = new StringBuilder().append(lineNumber).append(" Skipped ");
+										logger.debug(message);
+									}
 								} catch (IllegalAccessException | IllegalArgumentException
 										| InvocationTargetException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-		                	} 
-		                }
+							}
+						}
 					}
 				}
 
 			}
 			outFileWriter.close();
-			
+
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
 		} catch (IOException e) {
