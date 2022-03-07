@@ -1,0 +1,346 @@
+/**
+ * TestOfTestSpreasheetUtility.java
+ */
+package org.filteredpush.qc.bdqtestrunner;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+/**
+ * @author mole
+ *
+ */
+public class TestOfTestSpreasheetUtility {
+
+	private static final Log logger = LogFactory.getLog(TestOfTestSpreasheetUtility.class);
+	
+	public static Map<String,String> getInformationElements() { 
+		Map<String,String> result = new LinkedHashMap<String,String>();
+		result.put("bdq:annotation","bdq:annotation");
+		result.put("bdq:sourceAuthority","bdq:sourceAuthority");
+		result.put("dc:type","dc:type");
+		result.put("dcterms:license","dcterms:license");
+		result.put("dwc:acceptedNameUsageID","dwc:acceptedNameUsageID");
+		result.put("dwc:basisOfRecord","dwc:basisOfRecord");
+		result.put("dwc:class","dwc:class");
+		result.put("dwc:continent","dwc:continent");
+		result.put("dwc:coordinateUncertaintyInMeters","dwc:coordinateUncertaintyInMeters");
+		result.put("dwc:country","dwc:country");
+		result.put("dwc:countryCode","dwc:countryCode");
+		result.put("dwc:county","dwc:county");
+		result.put("dwc:dataGeneralizations","dwc:dataGeneralizations");
+		result.put("dwc:dateIdentified","dwc:dateIdentified");
+		result.put("dwc:day","dwc:day");
+		result.put("dwc:decimalLatitude","dwc:decimalLatitude");
+		result.put("dwc:decimalLongitude","dwc:decimalLongitude");
+		result.put("dwc:endDayOfYear","dwc:endDayOfYear");
+		result.put("dwc:establishmentMeans","dwc:establishmentMeans");
+		result.put("dwc:eventDate","dwc:eventDate");
+		result.put("dwc:family","dwc:family");
+		result.put("dwc:genus","dwc:genus");
+		result.put("dwc:geodeticDatum","dwc:geodeticDatum");
+		result.put("dwc:higherClassification","dwc:higherClassification");
+		result.put("dwc:higherGeography","dwc:higherGeography");
+		result.put("dwc:higherGeographyID","dwc:higherGeographyID");
+		result.put("dwc:infraspecificEpithet","dwc:infraspecificEpithet");
+		result.put("dwc:island","dwc:island");
+		result.put("dwc:islandGroup","dwc:islandGroup");
+		result.put("dwc:kingdom","dwc:kingdom");
+		result.put("dwc:locality","dwc:locality");
+		result.put("dwc:locationID","dwc:locationID");
+		result.put("dwc:maximumDepthInMeters","dwc:maximumDepthInMeters");
+		result.put("dwc:maximumElevationInMeters","dwc:maximumElevationInMeters");
+		result.put("dwc:minimumDepthInMeters","dwc:minimumDepthInMeters");
+		result.put("dwc:minimumElevationInMeters","dwc:minimumElevationInMeters");
+		result.put("dwc:month","dwc:month");
+		result.put("dwc:municipality","dwc:municipality");
+		result.put("dwc:occurrenceID","dwc:occurrenceID");
+		result.put("dwc:occurrenceStatus","dwc:occurrenceStatus");
+		result.put("dwc:order","dwc:order");
+		result.put("dwc:originalNameUsageID","dwc:originalNameUsageID");
+		result.put("dwc:parentNameUsageID","dwc:parentNameUsageID");
+		result.put("dwc:phylum","dwc:phylum");
+		result.put("dwc:scientificName","dwc:scientificName");
+		result.put("dwc:scientificNameAuthorship","dwc:scientificNameAuthorship");
+		result.put("dwc:scientificNameID","dwc:scientificNameID");
+		result.put("dwc:specificEpithet","dwc:specificEpithet");
+		result.put("dwc:startDayOfYear","dwc:startDayOfYear");
+		result.put("dwc:stateProvince","dwc:stateProvince");
+		result.put("dwc:subgenus","dwc:subgenus");
+		result.put("dwc:taxon","dwc:taxon");
+		result.put("dwc:taxonConceptID","dwc:taxonConceptID");
+		result.put("dwc:taxonID","dwc:taxonID");
+		result.put("dwc:taxonRank","dwc:taxonRank");
+		result.put("dwc:verbatimCoordinateSystem","dwc:verbatimCoordinateSystem");
+		result.put("dwc:verbatimCoordinates","dwc:verbatimCoordinates");
+		result.put("dwc:verbatimDepth","dwc:verbatimDepth");
+		result.put("dwc:verbatimElevation","dwc:verbatimElevation");
+		result.put("dwc:verbatimEventDate","dwc:verbatimEventDate");
+		result.put("dwc:verbatimLatitude","dwc:verbatimLatitude");
+		result.put("dwc:verbatimLocality","dwc:verbatimLocality");
+		result.put("dwc:verbatimLongitude","dwc:verbatimLongitude");
+		result.put("dwc:verbatimSRS","dwc:verbatimSRS");
+		result.put("dwc:vernacularName","dwc:vernacularName");
+		result.put("dwc:waterbody","dwc:waterbody");
+		result.put("dwc:year","dwc:year");
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 */
+	public TestOfTestSpreasheetUtility() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	private static void parseSourceSpreadsheet() throws IOException, URISyntaxException { 
+		
+		List<String> classList = new ArrayList<String>();
+		classList.add("MEASURE");
+		classList.add("VALIDATION");
+		classList.add("AMENDMENT");
+		classList.add("ISSUE");
+		List<String> validationResponseStatusTerms = new ArrayList<String>();
+		validationResponseStatusTerms.add("RUN_HAS_RESULT");
+		validationResponseStatusTerms.add("INTERNAL_PREREQUISITES_NOT_MET");
+		validationResponseStatusTerms.add("EXTERNAL_PREREQUISITES_NOT_MET");
+		List<String> validationResponseResultTerms = new ArrayList<String>();
+		validationResponseResultTerms.add("COMPLIANT");
+		validationResponseResultTerms.add("NOT_COMPLIANT");
+		List<String> amendmentResponseStatusTerms = new ArrayList<String>();
+		amendmentResponseStatusTerms.add("AMENDED");
+		amendmentResponseStatusTerms.add("NOT_AMENDED");
+		amendmentResponseStatusTerms.add("INTERNAL_PREREQUISITES_NOT_MET");
+		amendmentResponseStatusTerms.add("EXTERNAL_PREREQUISITES_NOT_MET");
+		
+		Map<String,String> outputRow = new LinkedHashMap<String,String>();
+		outputRow.put("LineNumber", "");
+		outputRow.put("LineForTest", "");
+		outputRow.put("GitHubIssueNo", "");
+		outputRow.put("GUID", "");
+		outputRow.put("Label", "");
+		outputRow.put("Response.Status", "");
+		outputRow.put("Response.Result", "");
+		outputRow.put("Response.Comment", "");
+		outputRow.put("Explanation", "");
+		
+		Map<String,String> terms = new HashMap<String,String>();
+		Map<String,String> outterms = new HashMap<String,String>();
+	    String filename = "/Test_data_7_2022-02-26.csv";
+	    filename = "/Test_data_9_2022-03-04.csv";
+	    filename = "/Test_data_10_2022-03-06.csv";
+	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
+	    File inputfile = new File(urlinfile.toURI());
+	    Reader in = new FileReader(inputfile);
+	    CSVPrinter printer = new CSVPrinter(new FileWriter("output.csv"), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL));
+	    CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
+	    Map<String,Integer> header = records.getHeaderMap();
+	    int line = 2; // first line in spreadsheet, header is 1.
+	    int errors = 0;
+	    for (CSVRecord record : records) {
+	    	outputRow.put("LineNumber",Integer.toString(line));
+	    	outputRow.put("LineForTest",record.get("Line #"));
+	    	outputRow.put("GitHubIssueNo",record.get("Number"));
+	    	outputRow.put("GUID",record.get("GUID"));
+	    	String testType = record.get("Output Type"); 
+	    	if (!classList.contains(testType)) { 
+	    		errors ++;
+	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized test class: " + testType);
+	    	}
+	    	outputRow.put("Label",testType + "_" + record.get("Label"));
+	    	String responseStatus =  record.get("Response.Status").trim();
+	    	outputRow.put("Response.Status", responseStatus);
+	    	outputRow.put("Response.Result", record.get("Response.Result"));
+	    	outputRow.put("Response.Comment", record.get("Comment"));
+	    	outputRow.put("Explanation", record.get("Explanation"));
+	    	Iterator<String> iin = getInformationElements().keySet().iterator();
+	    	while (iin.hasNext()) { 
+	    		outputRow.put(iin.next(),"");
+	    	}
+	    	Map<String,String> resultTermValues = new HashMap<String,String>();
+	    	
+	    	if (testType.equals("VALIDATION") && !validationResponseStatusTerms.contains(responseStatus)) { 
+	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized response.status " +responseStatus + " for " + testType);
+	    		errors++;
+	    	}
+	    	if (testType.equals("MEASURE") && !validationResponseStatusTerms.contains(responseStatus)) { 
+	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized response.status " +responseStatus + " for " + testType);
+	    		errors++;
+	    	}
+	    	if (testType.equals("AMENDMENT") && !amendmentResponseStatusTerms.contains(responseStatus)) { 
+	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized response.status " +responseStatus + " for " + testType);
+	    		errors++;
+	    	}
+	    	
+	    	
+	    	// {GitHub Issue=0, Number=1, GUID=2, Output Type=3, Label=4, Dimension=5, 
+	    	// Line #=6, Input Fields=7, Output Fields=8, Response.Status=9, Response.Result=10, 
+	    	// Comment=11, Explanation=12}
+	    	//System.out.print(Integer.toString(line) + " " + record.get("GUID") + " ");
+	    	String inputfields = record.get("Input Fields");
+	    	// handle a couple of special cases for splitting on comma: 
+	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804)");
+	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
+	    	List<String> bits = Arrays.asList(inputfields.split(","));
+	    	if (bits.isEmpty()) { 
+	    		System.out.println("Error in " + Integer.toString(line) + " " +inputfields);
+	    		errors++;
+	    	}
+	    	Iterator<String> i = bits.iterator();
+	    	while (i.hasNext()) {
+	    		String bit = i.next();
+	    		List<String> subbits = Arrays.asList(bit.split("="));
+	    		if (subbits.size()!=2) { 
+	    			System.out.println("Error in " + Integer.toString(line) + " " + bit );
+	    			errors++;
+	    		} else { 
+	    			// System.out.print(subbits.get(0) + " " + subbits.get(1));
+	    			String term = subbits.get(0).trim();
+	    			terms.put(term, term);
+	    			String value = subbits.get(1).trim();
+	    			if (!value.startsWith("\"") || !value.endsWith("\"")) { 
+	    				System.out.println("Error in " + Integer.toString(line) + " " + bit);
+	    				errors++;
+	    			} else { 
+	    				// output
+	    				if (outputRow.containsKey(term)) { 
+	    					String cleanedValue = value;
+	    					// handle a couple of special cases for splitting on comma: 
+	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804)");
+	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
+	    					// trim off leading/trailing quotes.
+	    					if (cleanedValue.charAt(0)=='"') { 
+	    						cleanedValue = cleanedValue.substring(1);
+	    					}
+	    					if (cleanedValue.charAt(cleanedValue.length()-1)=='"') { 
+	    						cleanedValue = cleanedValue.substring(0,cleanedValue.length()-1);
+	    					}
+	    					outputRow.put(term, cleanedValue);
+	    				}
+	    			}
+	    		}
+	    	}
+	    	String outfields = record.get("Output Fields");
+	    	List<String> outbits = Arrays.asList(outfields.split(","));
+	    	i = outbits.iterator();
+	    	while (i.hasNext()) {
+	    		String bit = i.next();
+	    		List<String> subbits = Arrays.asList(bit.split("="));
+	    		if (bit.trim().length()>0 &&  subbits.size()!=2) { 
+	    			System.out.println("Error in Output " + Integer.toString(line) + " " + bit );
+	    			errors++;
+	    		} else if (bit.trim().length() > 0) { 
+	    			// System.out.print(subbits.get(0) + " " + subbits.get(1));
+	    			String term = subbits.get(0).trim();
+	    			outterms.put(term, term);
+	    			String value = subbits.get(1).trim();
+	    			if (!value.startsWith("\"") || !value.endsWith("\"")) { 
+	    				System.out.println("Error in Output " + Integer.toString(line) + " " + bit);
+	    				errors++;
+	    			} else { 
+	    				// output
+	    				if (outputRow.containsKey(term)) { 
+	    					String cleanedValue = value;
+	    					// handle a couple of special cases for splitting on comma: 
+	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804)");
+	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
+	    					// trim off leading/trailing quotes.
+	    					if (cleanedValue.charAt(0)=='"') { 
+	    						cleanedValue = cleanedValue.substring(1);
+	    					}
+	    					if (cleanedValue.charAt(cleanedValue.length()-1)=='"') { 
+	    						cleanedValue = cleanedValue.substring(0,cleanedValue.length()-1);
+	    					}
+	    					resultTermValues.put(term, cleanedValue);
+	    				}
+	    			}
+	    		}
+	    	}
+	    	
+	    	if (line==2) { 
+	    		printer.printRecord(outputRow.keySet());
+	    	}
+	    	if (resultTermValues.size()>0) { 
+	    		// convert 
+	    		String resultVals = "{";
+	    		Iterator<String> iout = resultTermValues.keySet().iterator();
+	    		String separator = "";
+	    		while (iout.hasNext()) { 
+	    			String key = iout.next();
+	    			resultVals = resultVals + separator + '"' + key + '"'+':'+'"'+ resultTermValues.get(key).replace("\"", "\\"+"\"") + '"';
+	    			separator = ",";
+	    		}
+	    		resultVals = resultVals.concat("}");
+	    		outputRow.put("Response.Result", resultVals);
+	    	}
+	    	if (resultTermValues.size()>0 && outputRow.get("Response.Status") != "AMENDED" ) {
+	    		System.out.println("Error in Output " + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
+	    		errors++;
+	    	}
+	    	printer.printRecord(outputRow.values());
+	    	line++;
+	    }
+	    
+	    printer.close();
+	    
+	    Set<String> keyset = terms.keySet();
+	    SortedSet<String> keys = new TreeSet<String>();
+	    keys.addAll(keyset);
+	    Iterator<String> i = keys.iterator();
+	    while (i.hasNext()) { 
+	    	System.out.println(i.next());
+	    }
+	    Set<String> outkeyset = outterms.keySet();
+	    SortedSet<String> outkeys = new TreeSet<String>();
+	    outkeys.addAll(outkeyset);
+	    i = keys.iterator();
+	    while (i.hasNext()) { 
+	    	System.out.println(i.next());
+	    }
+	    System.out.println("Errors: " + Integer.toString(errors));
+	    
+	}
+
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		try {
+			parseSourceSpreadsheet();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}

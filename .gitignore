@@ -1,3 +1,7 @@
+output.csv
+.classpath
+.project
+.settings/
 target/
 pom.xml.tag
 pom.xml.releaseBackup
