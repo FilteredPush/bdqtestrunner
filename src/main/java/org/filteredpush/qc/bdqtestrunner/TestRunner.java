@@ -48,7 +48,10 @@ import org.datakurator.ffdq.api.DQResponse;
 import org.datakurator.ffdq.api.ResultValue;
 import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
+import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
+import org.filteredpush.qc.georeference.DwCGeoRefDQ;
+import org.filteredpush.qc.sciname.DwCSciNameDQ;
 
 /**
  * @author mole
@@ -85,6 +88,13 @@ public class TestRunner {
 	public boolean runTests() {
 		boolean result = false;
 
+		@SuppressWarnings("rawtypes")
+		List<Class> listToRun = new ArrayList<Class>(); 
+		listToRun.add(DwCGeoRefDQ.class);
+		listToRun.add(DwCEventDQ.class);
+		listToRun.add(DwCOtherDateDQ.class);
+		listToRun.add(DwCSciNameDQ.class);
+		
 		try {
 
 			CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
@@ -98,8 +108,9 @@ public class TestRunner {
 				String label = record.get("Label");
 				String expectedStatus = record.get("Response.Status");
 				String expectedResult = record.get("Response.Result");
-
-				Class cls = DwCOtherDateDQ.class;
+				
+				for (Class cls : listToRun) { 
+				//Class cls = DwCOtherDateDQ.class;
 				Object instance = cls.getDeclaredConstructor().newInstance();
 				for (Method javaMethod : cls.getMethods()) {
 					for (Annotation annotation : javaMethod.getAnnotations()) {
@@ -112,6 +123,7 @@ public class TestRunner {
 
 									for (Annotation parAnnotation : parameter.getAnnotations()) {
 										String parValue = null;
+										try { 
 										if (parAnnotation instanceof ActedUpon) {
 											logger.debug(parAnnotation.toString());
 											parValue = record.get( ((ActedUpon)parAnnotation).value() );
@@ -122,6 +134,11 @@ public class TestRunner {
 											parValue = record.get( ((Consulted)parAnnotation).value() );
 											logger.debug(parValue);
 											paramValues.add(parValue);
+										} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
+											// TODO: Handle parameters
+										}
+										} catch (IllegalArgumentException ex) { 
+											logger.error(ex.getMessage(),ex);
 										}
 									}
 								}
@@ -179,12 +196,22 @@ public class TestRunner {
 										}
 									} else if (label.startsWith("MEASURE_")) { 
 										// TODO: Handle CompletenessValue and NumericalValue
-										DQResponse<ResultValue> retval = 
-												(DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-										resultStatus = retval.getResultState().getLabel();
-										resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
-										resultComment = retval.getComment();
-										doComparison = true;
+										DQResponse<ResultValue> retval = null;
+										if (paramValues.size()==1) { 
+											retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0));
+										} else if (paramValues.size()==2) { 
+											retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+										}
+										if (retval!=null) { 	
+											resultStatus = retval.getResultState().getLabel();
+											if (retval.getValue()==null) { 
+												resultValue = "";
+											} else { 
+												resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+											}
+											resultComment = retval.getComment();
+											doComparison = true;
+										} 
 									}
 									if (doComparison) { 
 										// TODO: Handle different order of terms in amendment results.
@@ -219,9 +246,8 @@ public class TestRunner {
 						}
 					}
 				}
-
+				}
 			}
-			outFileWriter.close();
 
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
@@ -234,8 +260,7 @@ public class TestRunner {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error(e1.getMessage(),e1);
 		} catch (InvocationTargetException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -246,6 +271,12 @@ public class TestRunner {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
+		try {
+			outFileWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return result;
 	}
 	
