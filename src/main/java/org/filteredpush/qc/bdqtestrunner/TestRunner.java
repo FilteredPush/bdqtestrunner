@@ -128,11 +128,17 @@ public class TestRunner {
 											logger.debug(parAnnotation.toString());
 											parValue = record.get( ((ActedUpon)parAnnotation).value() );
 											logger.debug(parValue);
+											if (parValue.equals("[non-printing characters]")) { 
+												parValue=new String(Character.toChars(Character.CONTROL));
+											}
 											paramValues.add(parValue);
 										} else if (parAnnotation instanceof Consulted) {
 											logger.debug(parAnnotation.toString());
 											parValue = record.get( ((Consulted)parAnnotation).value() );
 											logger.debug(parValue);
+											if (parValue.equals("[non-printing characters]")) { 
+												parValue=new String(Character.toChars(Character.CONTROL));
+											}
 											paramValues.add(parValue);
 										} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 											// TODO: Handle parameters
@@ -225,7 +231,13 @@ public class TestRunner {
 											outFileWriter.write(message.toString());
 											outFileWriter.write("\n");
 										} else { 
-											StringBuilder message = new StringBuilder().append(lineNumber).append(" Fail got ").append(resultStatus).append(" expected ").append(expectedStatus );
+											StringBuilder message = new StringBuilder().append(lineNumber).append(" Fail got ");
+											if (!resultStatus.equals(expectedStatus)) { 
+											   message.append(resultStatus).append(" expected ").append(expectedStatus);
+											} else { 
+											   message.append(resultValue).append(" expected ").append(expectedResult);
+											   message.append(" ").append(resultComment);
+											}
 											logger.debug(resultStatus);
 											logger.debug(resultValue);
 											logger.debug(resultComment);
