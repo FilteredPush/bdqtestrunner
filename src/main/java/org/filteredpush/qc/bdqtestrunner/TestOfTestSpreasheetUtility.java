@@ -153,6 +153,8 @@ public class TestOfTestSpreasheetUtility {
 	    String filename = "/Test_data_7_2022-02-26.csv";
 	    filename = "/Test_data_9_2022-03-04.csv";
 	    filename = "/Test_data_10_2022-03-06.csv";
+	    filename = "/Test_data_11_2022-03-09.csv";
+	    filename = "/Test_data_12_2022-03-09.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -297,7 +299,7 @@ public class TestOfTestSpreasheetUtility {
 	    		resultVals = resultVals.concat("}");
 	    		outputRow.put("Response.Result", resultVals);
 	    	}
-	    	if (resultTermValues.size()>0 && outputRow.get("Response.Status") != "AMENDED" ) {
+	    	if (resultTermValues.size()>0 && !outputRow.get("Response.Status").equals("AMENDED") ) {
 	    		System.out.println("Error in Output " + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
 	    		errors++;
 	    	}

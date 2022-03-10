@@ -90,10 +90,10 @@ public class TestRunner {
 
 		@SuppressWarnings("rawtypes")
 		List<Class> listToRun = new ArrayList<Class>(); 
-		listToRun.add(DwCGeoRefDQ.class);
+		//listToRun.add(DwCGeoRefDQ.class);
 		listToRun.add(DwCEventDQ.class);
-		listToRun.add(DwCOtherDateDQ.class);
-		listToRun.add(DwCSciNameDQ.class);
+		//listToRun.add(DwCOtherDateDQ.class);
+		//listToRun.add(DwCSciNameDQ.class);
 		
 		try {
 
@@ -155,6 +155,7 @@ public class TestRunner {
 									boolean doComparison = false;
 									if (label.startsWith("VALIDATION_")) { 
 										DQResponse<ComplianceValue> retval = null;
+										logger.debug(paramValues.size());
 										if (paramValues.size()==1) { 
 											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
 										} else if (paramValues.size()==2) { 
@@ -162,9 +163,10 @@ public class TestRunner {
 										} else if (paramValues.size()==3) { 
 											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
 										} else if (paramValues.size()==4) { 
-											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(2));
+											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
 										}
 										if (retval!=null) { 
+											logger.debug(retval.getResultState().getLabel());
 											resultStatus = retval.getResultState().getLabel();
 											if (retval.getValue()!=null) { 
 												resultValue = retval.getValue().getLabel();
@@ -184,12 +186,26 @@ public class TestRunner {
 											} else if (paramValues.size()==3) { 
 												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
 											} else if (paramValues.size()==4) { 
-												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(2));
+												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
 											}
 											if (retval!=null) { 
 												resultStatus = retval.getResultState().getLabel();
 												if (retval.getValue()!=null) { 
-													resultValue = retval.getValue().toString();
+													Map<String,String> obj = retval.getValue().getObject();
+													StringBuilder strretval = new StringBuilder("");
+									    			if (obj.size() > 0) { 
+									    				strretval.append("{");
+									    				String separator = "";
+									    				for (Map.Entry<String, String> entry : obj.entrySet()) {
+									    				    String key = entry.getKey();
+									    				    String value = entry.getValue();
+									    				    strretval.append("\"").append(key).append("\":\"").append(value).append("\"").append(separator);
+									    				    separator=",";
+									    				}
+									    				strretval.append("}");
+									    			}
+													resultValue = strretval.toString();
+													logger.debug(resultValue);
 												} else {
 													resultValue = "";
 												}
