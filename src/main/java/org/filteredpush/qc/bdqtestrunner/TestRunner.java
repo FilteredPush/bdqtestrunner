@@ -32,7 +32,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,14 +67,15 @@ public class TestRunner {
 	
 	private FileWriter outFileWriter;
 	
-	
+	private String source;
 	
 	/**
 	 * @throws IOException 
 	 * 
 	 */
 	public TestRunner() throws IOException {
-		URL sourceUrl = new URL("https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv");
+		source = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv";
+		URL sourceUrl = new URL(source);
 		InputStreamReader inputStream = new InputStreamReader(sourceUrl.openStream());
 		in = new BufferedReader(inputStream);
 		
@@ -82,6 +85,7 @@ public class TestRunner {
 	
 	public TestRunner(File inputFile) throws IOException { 
 		in = new FileReader(inputFile);
+		source = inputFile.getName();
 	    outFileWriter = new FileWriter("test_run_output.txt");
 	}
 
@@ -92,19 +96,30 @@ public class TestRunner {
 		List<Class> listToRun = new ArrayList<Class>(); 
 		//listToRun.add(DwCGeoRefDQ.class);
 		listToRun.add(DwCEventDQ.class);
-		//listToRun.add(DwCOtherDateDQ.class);
+		listToRun.add(DwCOtherDateDQ.class);
 		//listToRun.add(DwCSciNameDQ.class);
 		
 		try {
 
+			outFileWriter.write("Validation Test Data From: " + source);
+			outFileWriter.write("\n");
+			outFileWriter.write(java.time.LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+			outFileWriter.write("\n");
+			outFileWriter.write("Validating Test Implementations In:");
+			outFileWriter.write("\n");
+			Iterator<Class> i = listToRun.iterator();
+			while (i.hasNext()) { 
+				outFileWriter.write(i.next().getName());
+				outFileWriter.write("\n");
+			}
 			CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
 			Map<String,Integer> header = records.getHeaderMap();
-			int line = 2; // first line in spreadsheet, header is 1.
-			int errors = 0;
 			for (CSVRecord record : records) {
 				String GUID = record.get("GUID");
 				String lineNumber = record.get("LineNumber");
+				String dataID = record.get("dataID");
 				String lineForTest = record.get("LineForTest");
+				String gitHubIssueNo = record.get("GitHubIssueNo");
 				String label = record.get("Label");
 				String expectedStatus = record.get("Response.Status");
 				String expectedResult = record.get("Response.Result");
@@ -242,12 +257,18 @@ public class TestRunner {
 												expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
 												expectedResult.equals(resultValue)) 
 												) {
-											StringBuilder message = new StringBuilder().append(lineNumber).append(" Pass");
+											StringBuilder message = new StringBuilder()
+													.append(dataID)
+													.append(" #").append(gitHubIssueNo)
+													.append(" Pass");
 											logger.debug(message);
 											outFileWriter.write(message.toString());
 											outFileWriter.write("\n");
 										} else { 
-											StringBuilder message = new StringBuilder().append(lineNumber).append(" Fail got ");
+											StringBuilder message = new StringBuilder()
+													.append(dataID)
+													.append(" #").append(gitHubIssueNo)
+													.append(" Fail got ");
 											if (!resultStatus.equals(expectedStatus)) { 
 											   message.append(resultStatus).append(" expected ").append(expectedStatus);
 											} else { 
@@ -262,7 +283,10 @@ public class TestRunner {
 											outFileWriter.write("\n");
 										}
 									} else { 
-										StringBuilder message = new StringBuilder().append(lineNumber).append(" Skipped ");
+										StringBuilder message = new StringBuilder()
+												.append(dataID)
+												.append(" #").append(gitHubIssueNo)
+												.append(" Skipped ");
 										logger.debug(message);
 									}
 								} catch (IllegalAccessException | IllegalArgumentException

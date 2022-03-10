@@ -104,7 +104,7 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:verbatimLongitude","dwc:verbatimLongitude");
 		result.put("dwc:verbatimSRS","dwc:verbatimSRS");
 		result.put("dwc:vernacularName","dwc:vernacularName");
-		result.put("dwc:waterbody","dwc:waterbody");
+		result.put("dwc:waterBody","dwc:waterBody");
 		result.put("dwc:year","dwc:year");
 		
 		return result;
@@ -139,6 +139,7 @@ public class TestOfTestSpreasheetUtility {
 		
 		Map<String,String> outputRow = new LinkedHashMap<String,String>();
 		outputRow.put("LineNumber", "");
+		outputRow.put("dataID", "");
 		outputRow.put("LineForTest", "");
 		outputRow.put("GitHubIssueNo", "");
 		outputRow.put("GUID", "");
@@ -146,7 +147,8 @@ public class TestOfTestSpreasheetUtility {
 		outputRow.put("Response.Status", "");
 		outputRow.put("Response.Result", "");
 		outputRow.put("Response.Comment", "");
-		outputRow.put("Explanation", "");
+		//outputRow.put("Explanation", "");
+		outputRow.put("IssuesWithThisRow", "");
 		
 		Map<String,String> terms = new HashMap<String,String>();
 		Map<String,String> outterms = new HashMap<String,String>();
@@ -155,30 +157,35 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_10_2022-03-06.csv";
 	    filename = "/Test_data_11_2022-03-09.csv";
 	    filename = "/Test_data_12_2022-03-09.csv";
+	    filename = "/Test_data_13_2022-03-10.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
-	    CSVPrinter printer = new CSVPrinter(new FileWriter("output.csv"), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL));
+	    String outputFileName = "TG2_test_validation_data.csv";
+	    CSVPrinter printer = new CSVPrinter(new FileWriter(outputFileName), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL));
 	    CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
 	    Map<String,Integer> header = records.getHeaderMap();
 	    int line = 2; // first line in spreadsheet, header is 1.
 	    int errors = 0;
 	    for (CSVRecord record : records) {
 	    	outputRow.put("LineNumber",Integer.toString(line));
-	    	outputRow.put("LineForTest",record.get("Line #"));
+	    	outputRow.put("LineForTest",record.get("InTestLine #"));
+	    	String dataID = record.get("dataID");
+	    	outputRow.put("dataID",dataID);
 	    	outputRow.put("GitHubIssueNo",record.get("Number"));
 	    	outputRow.put("GUID",record.get("GUID"));
 	    	String testType = record.get("Output Type"); 
 	    	if (!classList.contains(testType)) { 
 	    		errors ++;
-	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized test class: " + testType);
+	    		System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " unrecognized test class: " + testType);
 	    	}
 	    	outputRow.put("Label",testType + "_" + record.get("Label"));
 	    	String responseStatus =  record.get("Response.Status").trim();
 	    	outputRow.put("Response.Status", responseStatus);
 	    	outputRow.put("Response.Result", record.get("Response.Result"));
 	    	outputRow.put("Response.Comment", record.get("Comment"));
-	    	outputRow.put("Explanation", record.get("Explanation"));
+	    	//outputRow.put("Explanation", record.get("Explanation"));
+	    	outputRow.put("IssuesWithThisRow", record.get("ISSUE"));
 	    	Iterator<String> iin = getInformationElements().keySet().iterator();
 	    	while (iin.hasNext()) { 
 	    		outputRow.put(iin.next(),"");
@@ -217,7 +224,7 @@ public class TestOfTestSpreasheetUtility {
 	    		String bit = i.next();
 	    		List<String> subbits = Arrays.asList(bit.split("="));
 	    		if (subbits.size()!=2) { 
-	    			System.out.println("Error in " + Integer.toString(line) + " " + bit );
+	    			System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " " + bit );
 	    			errors++;
 	    		} else { 
 	    			// System.out.print(subbits.get(0) + " " + subbits.get(1));
@@ -225,7 +232,7 @@ public class TestOfTestSpreasheetUtility {
 	    			terms.put(term, term);
 	    			String value = subbits.get(1).trim();
 	    			if (!value.startsWith("\"") || !value.endsWith("\"")) { 
-	    				System.out.println("Error in " + Integer.toString(line) + " " + bit);
+	    				System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " " + bit);
 	    				errors++;
 	    			} else { 
 	    				// output
@@ -242,6 +249,9 @@ public class TestOfTestSpreasheetUtility {
 	    						cleanedValue = cleanedValue.substring(0,cleanedValue.length()-1);
 	    					}
 	    					outputRow.put(term, cleanedValue);
+	    				} else {
+	    					errors++;
+	    					System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " unrecognized input term " + term);
 	    				}
 	    			}
 	    		}
@@ -253,7 +263,7 @@ public class TestOfTestSpreasheetUtility {
 	    		String bit = i.next();
 	    		List<String> subbits = Arrays.asList(bit.split("="));
 	    		if (bit.trim().length()>0 &&  subbits.size()!=2) { 
-	    			System.out.println("Error in Output " + Integer.toString(line) + " " + bit );
+	    			System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " " + bit );
 	    			errors++;
 	    		} else if (bit.trim().length() > 0) { 
 	    			// System.out.print(subbits.get(0) + " " + subbits.get(1));
@@ -261,7 +271,7 @@ public class TestOfTestSpreasheetUtility {
 	    			outterms.put(term, term);
 	    			String value = subbits.get(1).trim();
 	    			if (!value.startsWith("\"") || !value.endsWith("\"")) { 
-	    				System.out.println("Error in Output " + Integer.toString(line) + " " + bit);
+	    				System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " " + bit);
 	    				errors++;
 	    			} else { 
 	    				// output
@@ -278,6 +288,9 @@ public class TestOfTestSpreasheetUtility {
 	    						cleanedValue = cleanedValue.substring(0,cleanedValue.length()-1);
 	    					}
 	    					resultTermValues.put(term, cleanedValue);
+	    				} else { 
+	    					errors++;
+	    					System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " unrecognized output term " + term);
 	    				}
 	    			}
 	    		}
@@ -300,7 +313,7 @@ public class TestOfTestSpreasheetUtility {
 	    		outputRow.put("Response.Result", resultVals);
 	    	}
 	    	if (resultTermValues.size()>0 && !outputRow.get("Response.Status").equals("AMENDED") ) {
-	    		System.out.println("Error in Output " + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
+	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
 	    		errors++;
 	    	}
 	    	printer.printRecord(outputRow.values());
@@ -313,6 +326,7 @@ public class TestOfTestSpreasheetUtility {
 	    SortedSet<String> keys = new TreeSet<String>();
 	    keys.addAll(keyset);
 	    Iterator<String> i = keys.iterator();
+	    System.out.println("Terms matched in InputFields");
 	    while (i.hasNext()) { 
 	    	System.out.println(i.next());
 	    }
@@ -320,6 +334,7 @@ public class TestOfTestSpreasheetUtility {
 	    SortedSet<String> outkeys = new TreeSet<String>();
 	    outkeys.addAll(outkeyset);
 	    i = keys.iterator();
+	    System.out.println("Terms matched in OutputFields");
 	    while (i.hasNext()) { 
 	    	System.out.println(i.next());
 	    }
