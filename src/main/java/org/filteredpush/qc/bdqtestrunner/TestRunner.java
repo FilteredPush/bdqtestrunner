@@ -69,6 +69,10 @@ public class TestRunner {
 	
 	private String source;
 	
+	private List<String> targetClasses;
+	
+	private List<String> targetIssueNumbers;
+	
 	/**
 	 * @throws IOException 
 	 * 
@@ -78,26 +82,64 @@ public class TestRunner {
 		URL sourceUrl = new URL(source);
 		InputStreamReader inputStream = new InputStreamReader(sourceUrl.openStream());
 		in = new BufferedReader(inputStream);
-		
-	    outFileWriter = new FileWriter("test_run_output.txt");
+		init();
 		
 	}
 	
 	public TestRunner(File inputFile) throws IOException { 
 		in = new FileReader(inputFile);
 		source = inputFile.getName();
-	    outFileWriter = new FileWriter("test_run_output.txt");
+		init();
 	}
 
+	/**
+	 * setup actions common to all constructors;
+	 */
+	private void init() throws IOException { 
+	    outFileWriter = new FileWriter("test_run_output.txt");
+	    targetClasses = new ArrayList<String>();
+	    targetClasses.add("DwCGeoRefDQ");
+	    targetClasses.add("DwCEventDQ");
+	    targetClasses.add("DwCOtherDateDQ");
+	    targetClasses.add("DwCSciNameDQ");
+	    targetIssueNumbers = new ArrayList<String>();  // empty=run all tests.
+	}
+	
+	public void setOutputFile(String filename) throws IOException {
+		File testOutput = new File(filename);
+		if (testOutput.exists()) { 
+			throw new IOException("Specified output file already exists, cannot overwrite");
+		}
+	    outFileWriter = new FileWriter(filename);
+	}
+	
+	public void setListToRun(List<String> namesOfClassesToRun) { 
+		targetClasses.clear();
+		targetClasses.addAll(namesOfClassesToRun);
+	}
+	
+	public void setIssuesToRun(List<String> namesOfIssueNumbersToRun) { 
+		targetIssueNumbers.clear();
+		targetIssueNumbers.addAll(namesOfIssueNumbersToRun);
+	}
+	
 	public boolean runTests() {
 		boolean result = false;
 
 		@SuppressWarnings("rawtypes")
 		List<Class> listToRun = new ArrayList<Class>(); 
-		//listToRun.add(DwCGeoRefDQ.class);
-		listToRun.add(DwCEventDQ.class);
-		listToRun.add(DwCOtherDateDQ.class);
-		//listToRun.add(DwCSciNameDQ.class);
+		if (targetClasses.contains("DwCGeoRefDQ")) {
+			listToRun.add(DwCGeoRefDQ.class);
+		}
+		if (targetClasses.contains("DwCEventDQ")) {
+			listToRun.add(DwCEventDQ.class);
+		}
+		if (targetClasses.contains("DwCOtherDateDQ")) {
+			listToRun.add(DwCOtherDateDQ.class);
+		}
+		if (targetClasses.contains("DwCSciNameDQ")) {
+			listToRun.add(DwCSciNameDQ.class);
+		}
 		
 		try {
 
@@ -123,181 +165,189 @@ public class TestRunner {
 				String label = record.get("Label");
 				String expectedStatus = record.get("Response.Status");
 				String expectedResult = record.get("Response.Result");
-				
-				for (Class cls : listToRun) { 
-				//Class cls = DwCOtherDateDQ.class;
-				Object instance = cls.getDeclaredConstructor().newInstance();
-				for (Method javaMethod : cls.getMethods()) {
-					for (Annotation annotation : javaMethod.getAnnotations()) {
-						if (annotation instanceof Provides) {
-							String foundGuid = ((Provides) annotation).value();
-							if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
-								logger.debug("Found implementation for: " + GUID);
-								List<String> paramValues = new ArrayList<String>();
-								for (Parameter parameter : javaMethod.getParameters()) {
 
-									for (Annotation parAnnotation : parameter.getAnnotations()) {
-										String parValue = null;
-										try { 
-										if (parAnnotation instanceof ActedUpon) {
-											logger.debug(parAnnotation.toString());
-											parValue = record.get( ((ActedUpon)parAnnotation).value() );
-											logger.debug(parValue);
-											if (parValue.equals("[non-printing characters]")) { 
-												parValue=new String(Character.toChars(Character.CONTROL));
-											}
-											paramValues.add(parValue);
-										} else if (parAnnotation instanceof Consulted) {
-											logger.debug(parAnnotation.toString());
-											parValue = record.get( ((Consulted)parAnnotation).value() );
-											logger.debug(parValue);
-											if (parValue.equals("[non-printing characters]")) { 
-												parValue=new String(Character.toChars(Character.CONTROL));
-											}
-											paramValues.add(parValue);
-										} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
-											// TODO: Handle parameters
-										}
-										} catch (IllegalArgumentException ex) { 
-											logger.error(ex.getMessage(),ex);
-										}
-									}
-								}
-								try {
-									String resultStatus = "";
-									String resultValue = "";
-									String resultComment = "";
-									boolean doComparison = false;
-									if (label.startsWith("VALIDATION_")) { 
-										DQResponse<ComplianceValue> retval = null;
-										logger.debug(paramValues.size());
-										if (paramValues.size()==1) { 
-											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
-										} else if (paramValues.size()==2) { 
-											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-										} else if (paramValues.size()==3) { 
-											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
-										} else if (paramValues.size()==4) { 
-											retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
-										}
-										if (retval!=null) { 
-											logger.debug(retval.getResultState().getLabel());
-											resultStatus = retval.getResultState().getLabel();
-											if (retval.getValue()!=null) { 
-												resultValue = retval.getValue().getLabel();
-											} else { 
-												resultValue = "";
-											}
-											resultComment = retval.getComment();
-											doComparison = true;
-										}
-									} else if (label.startsWith("AMENDMENT_")) { 
-										try { 
-											DQResponse<AmendmentValue> retval = null;
-											if (paramValues.size()==1) { 
-												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0));
-											} else if (paramValues.size()==2) { 
-												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-											} else if (paramValues.size()==3) { 
-												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
-											} else if (paramValues.size()==4) { 
-												retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
-											}
-											if (retval!=null) { 
-												resultStatus = retval.getResultState().getLabel();
-												if (retval.getValue()!=null) { 
-													Map<String,String> obj = retval.getValue().getObject();
-													StringBuilder strretval = new StringBuilder("");
-									    			if (obj.size() > 0) { 
-									    				strretval.append("{");
-									    				String separator = "";
-									    				for (Map.Entry<String, String> entry : obj.entrySet()) {
-									    				    String key = entry.getKey();
-									    				    String value = entry.getValue();
-									    				    strretval.append("\"").append(key).append("\":\"").append(value).append("\"").append(separator);
-									    				    separator=",";
-									    				}
-									    				strretval.append("}");
-									    			}
-													resultValue = strretval.toString();
-													logger.debug(resultValue);
-												} else {
-													resultValue = "";
+				boolean runMe = true;
+				if (targetIssueNumbers.size()>0) {
+					if (!targetIssueNumbers.contains(gitHubIssueNo)) { 
+						runMe = false;
+						logger.debug("Skipping #" + gitHubIssueNo +" not in list of target issue numbers");
+					}
+				}
+				if (runMe) { 
+					for (Class cls : listToRun) { 
+						Object instance = cls.getDeclaredConstructor().newInstance();
+						for (Method javaMethod : cls.getMethods()) {
+							for (Annotation annotation : javaMethod.getAnnotations()) {
+								if (annotation instanceof Provides) {
+									String foundGuid = ((Provides) annotation).value();
+									if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
+										logger.debug("Found implementation for: " + GUID);
+										List<String> paramValues = new ArrayList<String>();
+										for (Parameter parameter : javaMethod.getParameters()) {
+
+											for (Annotation parAnnotation : parameter.getAnnotations()) {
+												String parValue = null;
+												try { 
+													if (parAnnotation instanceof ActedUpon) {
+														logger.debug(parAnnotation.toString());
+														parValue = record.get( ((ActedUpon)parAnnotation).value() );
+														logger.debug(parValue);
+														if (parValue.equals("[non-printing characters]")) { 
+															parValue=new String(Character.toChars(Character.CONTROL));
+														}
+														paramValues.add(parValue);
+													} else if (parAnnotation instanceof Consulted) {
+														logger.debug(parAnnotation.toString());
+														parValue = record.get( ((Consulted)parAnnotation).value() );
+														logger.debug(parValue);
+														if (parValue.equals("[non-printing characters]")) { 
+															parValue=new String(Character.toChars(Character.CONTROL));
+														}
+														paramValues.add(parValue);
+													} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
+														// TODO: Handle parameters
+													}
+												} catch (IllegalArgumentException ex) { 
+													logger.error(ex.getMessage(),ex);
 												}
-												resultComment = retval.getComment();
-												doComparison = true;
 											}
-										} catch (IndexOutOfBoundsException e) { 
-											logger.debug(e.getMessage());
-											// TODO: Error in parameter binding? 
 										}
-									} else if (label.startsWith("MEASURE_")) { 
-										// TODO: Handle CompletenessValue and NumericalValue
-										DQResponse<ResultValue> retval = null;
-										if (paramValues.size()==1) { 
-											retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0));
-										} else if (paramValues.size()==2) { 
-											retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-										}
-										if (retval!=null) { 	
-											resultStatus = retval.getResultState().getLabel();
-											if (retval.getValue()==null) { 
-												resultValue = "";
+										try {
+											String resultStatus = "";
+											String resultValue = "";
+											String resultComment = "";
+											boolean doComparison = false;
+											if (label.startsWith("VALIDATION_")) { 
+												DQResponse<ComplianceValue> retval = null;
+												logger.debug(paramValues.size());
+												if (paramValues.size()==1) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
+												} else if (paramValues.size()==2) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+												} else if (paramValues.size()==3) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
+												} else if (paramValues.size()==4) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
+												}
+												if (retval!=null) { 
+													logger.debug(retval.getResultState().getLabel());
+													resultStatus = retval.getResultState().getLabel();
+													if (retval.getValue()!=null) { 
+														resultValue = retval.getValue().getLabel();
+													} else { 
+														resultValue = "";
+													}
+													resultComment = retval.getComment();
+													doComparison = true;
+												}
+											} else if (label.startsWith("AMENDMENT_")) { 
+												try { 
+													DQResponse<AmendmentValue> retval = null;
+													if (paramValues.size()==1) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0));
+													} else if (paramValues.size()==2) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+													} else if (paramValues.size()==3) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
+													} else if (paramValues.size()==4) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
+													}
+													if (retval!=null) { 
+														resultStatus = retval.getResultState().getLabel();
+														if (retval.getValue()!=null) { 
+															Map<String,String> obj = retval.getValue().getObject();
+															StringBuilder strretval = new StringBuilder("");
+															if (obj.size() > 0) { 
+																strretval.append("{");
+																String separator = "";
+																for (Map.Entry<String, String> entry : obj.entrySet()) {
+																	String key = entry.getKey();
+																	String value = entry.getValue();
+																	strretval.append("\"").append(key).append("\":\"").append(value).append("\"").append(separator);
+																	separator=",";
+																}
+																strretval.append("}");
+															}
+															resultValue = strretval.toString();
+															logger.debug(resultValue);
+														} else {
+															resultValue = "";
+														}
+														resultComment = retval.getComment();
+														doComparison = true;
+													}
+												} catch (IndexOutOfBoundsException e) { 
+													logger.debug(e.getMessage());
+													// TODO: Error in parameter binding? 
+												}
+											} else if (label.startsWith("MEASURE_")) { 
+												// TODO: Handle CompletenessValue and NumericalValue
+												DQResponse<ResultValue> retval = null;
+												if (paramValues.size()==1) { 
+													retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0));
+												} else if (paramValues.size()==2) { 
+													retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+												}
+												if (retval!=null) { 	
+													resultStatus = retval.getResultState().getLabel();
+													if (retval.getValue()==null) { 
+														resultValue = "";
+													} else { 
+														resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+													}
+													resultComment = retval.getComment();
+													doComparison = true;
+												} 
+											}
+											if (doComparison) { 
+												// TODO: Handle different order of terms in amendment results.
+												if (expectedStatus.equals(resultStatus) && (
+														expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
+														expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
+														expectedResult.equals(resultValue)) 
+														) {
+													StringBuilder message = new StringBuilder()
+															.append(dataID)
+															.append(" #").append(gitHubIssueNo)
+															.append(" Pass");
+													logger.debug(message);
+													outFileWriter.write(message.toString());
+													outFileWriter.write("\n");
+												} else { 
+													StringBuilder message = new StringBuilder()
+															.append(dataID)
+															.append(" #").append(gitHubIssueNo)
+															.append(" Fail got ");
+													if (!resultStatus.equals(expectedStatus)) { 
+														message.append(resultStatus).append(" expected ").append(expectedStatus);
+													} else { 
+														message.append(resultValue).append(" expected ").append(expectedResult);
+														message.append(" ").append(resultComment);
+													}
+													logger.debug(resultStatus);
+													logger.debug(resultValue);
+													logger.debug(resultComment);
+													logger.debug(message);
+													outFileWriter.write(message.toString());
+													outFileWriter.write("\n");
+												}
 											} else { 
-												resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+												StringBuilder message = new StringBuilder()
+														.append(dataID)
+														.append(" #").append(gitHubIssueNo)
+														.append(" Skipped ");
+												logger.debug(message);
 											}
-											resultComment = retval.getComment();
-											doComparison = true;
-										} 
-									}
-									if (doComparison) { 
-										// TODO: Handle different order of terms in amendment results.
-										if (expectedStatus.equals(resultStatus) && (
-												expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
-												expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
-												expectedResult.equals(resultValue)) 
-												) {
-											StringBuilder message = new StringBuilder()
-													.append(dataID)
-													.append(" #").append(gitHubIssueNo)
-													.append(" Pass");
-											logger.debug(message);
-											outFileWriter.write(message.toString());
-											outFileWriter.write("\n");
-										} else { 
-											StringBuilder message = new StringBuilder()
-													.append(dataID)
-													.append(" #").append(gitHubIssueNo)
-													.append(" Fail got ");
-											if (!resultStatus.equals(expectedStatus)) { 
-											   message.append(resultStatus).append(" expected ").append(expectedStatus);
-											} else { 
-											   message.append(resultValue).append(" expected ").append(expectedResult);
-											   message.append(" ").append(resultComment);
-											}
-											logger.debug(resultStatus);
-											logger.debug(resultValue);
-											logger.debug(resultComment);
-											logger.debug(message);
-											outFileWriter.write(message.toString());
-											outFileWriter.write("\n");
+										} catch (IllegalAccessException | IllegalArgumentException
+												| InvocationTargetException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
 										}
-									} else { 
-										StringBuilder message = new StringBuilder()
-												.append(dataID)
-												.append(" #").append(gitHubIssueNo)
-												.append(" Skipped ");
-										logger.debug(message);
 									}
-								} catch (IllegalAccessException | IllegalArgumentException
-										| InvocationTargetException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
 								}
 							}
 						}
 					}
-				}
 				}
 			}
 

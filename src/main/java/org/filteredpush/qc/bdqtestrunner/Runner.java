@@ -17,8 +17,17 @@
  */
 package org.filteredpush.qc.bdqtestrunner;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,11 +45,75 @@ public class Runner {
 		
 		logger.debug("Starting");
         
-		try {
-			TestRunner testRunner = new TestRunner();
-			testRunner.runTests();
+		Options options = new Options();
+		options.addOption("i","input",true,"File (filename of a local file) containing test data against which to validate tests, if not specified https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv will be used.");
+		options.addOption("o","output",true,"File to which to write output, if specified must not exist.  Default if not specified is test_run_output.txt which will be overwritten if it exists.");
+		options.addOption("c","classes",true,"List of classes containing test implementations to validate against the test data (dafault DwCGeoRefDQ DwCEventDQ DwCOtherDateDQ DwCSciNameDQ)");
+		options.addOption("g","gitHubIssues", true, "List of github issue numbers for tests to run, if not specified all tests will run, if specified only the listed tests will be run.");
+		options.addOption("h","help",false,"Show help.");
+
+		try { 
+			// Get option values
+			CommandLineParser parser = new DefaultParser();
+			CommandLine cmd = parser.parse(options, args);
+			
+			if (cmd.hasOption("h")) { 
+				HelpFormatter formatter = new HelpFormatter();
+				formatter.printHelp( "java -jar bdqtestrunner-{version}-{gitcommit}-executable.jar", options);
+				System.exit(0);
+			} else {
+				String outfile = "test_run_output.txt";
+				String infile = null;
+				TestRunner testRunner;
+				// setup test runner against target validation data file
+				if (cmd.hasOption("i")) { 
+					infile = cmd.getOptionValue("i");
+					File inputFile = new File(infile);
+					if (!inputFile.exists()) {
+						throw new Exception("Specified input file [" + infile + "] not found.");
+					}
+					if (!inputFile.canRead()) {
+						throw new Exception("Unable to read specified input file [" + infile + "].");
+					}
+					testRunner = new TestRunner(inputFile);
+				} else { 
+					testRunner = new TestRunner();
+				}
+				// set optional conditions
+				if (cmd.hasOption("o")) {
+					outfile = cmd.getOptionValue("o");
+					testRunner.setOutputFile(outfile);
+				}
+				if (cmd.hasOption("c")) {
+					String[] classes = cmd.getOptionValues("c");
+					if (classes !=null && classes.length==1 && classes[0].contains(",")) { 
+						// handle a comma separated list as the argument
+						classes = classes[0].split(",");
+					}
+					List<String> classList = Arrays.asList(classes);
+					classList.replaceAll(String::trim);
+					testRunner.setListToRun(classList);
+				}
+				if (cmd.hasOption("g")) {
+					String[] issues = cmd.getOptionValues("g");
+					if (issues !=null && issues.length==1 && issues[0].contains(",")) {
+						// handle a comma separated list as the argument
+						issues = issues[0].split(",");
+					}
+					List<String> issueList = Arrays.asList(issues);
+					issueList.replaceAll(String::trim);
+					testRunner.setIssuesToRun(issueList);
+				}
+				// run the tests
+				testRunner.runTests();
+			}
+		
 		} catch (IOException e) {
 			logger.error(e.getMessage(),e);
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			System.out.println(e.getMessage());
 		}
     	
     	System.out.println("Done");

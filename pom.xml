@@ -7,14 +7,32 @@
 	<packaging>jar</packaging>
 
 	<name>bdqtestrunner</name>
-	<url>http://maven.apache.org</url>
-
+	<description>Tools for validating FilteredPush TDWG BDQ TG2 test implementations against test the validation data set, and for preparing the validation test data set.</description>
+	<url>https://github.com/dwg/bdq/tg2/</url>
+	<licenses>
+		<license>
+			<name>Apache license, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Paul J. Morris</name>
+			<email>mole@morris.net</email>
+			<organization>Museum of Comparative Zoology, Harvard University</organization>
+			<organizationUrl>https://www.mcz.harvard.edu/</organizationUrl>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git@github.com:FilteredPush/bdqtestrunner.git</connection>
+		<developerConnection>scm:git:git@github.com:FilteredPush/bdqtestrunner.git</developerConnection>
+		<url>git@github.com:FilteredPush/bdqtestrunner.git</url>
+	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-
 	<dependencies>
-
 		<dependency>
 			<groupId>org.filteredpush</groupId>
 			<artifactId>event_date_qc</artifactId>
@@ -58,10 +76,48 @@
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>5.0.0</version>
+				<executions>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>initialize</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<includeOnlyProperties>
+						<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+					</includeOnlyProperties>
+					<commitIdGenerationMode>full</commitIdGenerationMode>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}</directory>
+							<includes>
+								<include>${project.artifactId}-*-executable.jar</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -100,6 +156,44 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<!-- exclude signature files from event_date_qc, sci_name_qc, geo_ref_qc libraries -->
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<outputDirectory>${project.basedir}</outputDirectory>
+							<outputFile>${project.artifactId}-${project.version}-${git.commit.id.abbrev}-executable.jar</outputFile>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>org.filteredpush.qc.bdqtestrunner.Runner</Main-Class>
+										<Class-Path>org/filteredpush/qc/bdqtestrunner</Class-Path>
+										<Multi-Release>true</Multi-Release>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
