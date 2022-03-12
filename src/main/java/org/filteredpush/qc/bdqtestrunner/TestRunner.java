@@ -50,6 +50,7 @@ import org.datakurator.ffdq.api.DQResponse;
 import org.datakurator.ffdq.api.ResultValue;
 import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
+import org.datakurator.ffdq.api.result.NumericalValue;
 import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
@@ -293,7 +294,11 @@ public class TestRunner {
 													if (retval.getValue()==null) { 
 														resultValue = "";
 													} else { 
-														resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+														if (retval.getValue().getClass().equals(NumericalValue.class)) {
+															resultValue = retval.getValue().getObject().toString();
+														} else {  
+															resultValue = retval.getValue().toString();  // different between completenessvalue and numericalvalue
+														}
 													}
 													resultComment = retval.getComment();
 													doComparison = true;
