@@ -164,8 +164,8 @@ public class TestRunner {
 				String lineForTest = record.get("LineForTest");
 				String gitHubIssueNo = record.get("GitHubIssueNo");
 				String label = record.get("Label");
-				String expectedStatus = record.get("Response.Status");
-				String expectedResult = record.get("Response.Result");
+				String expectedStatus = record.get("Response.status");
+				String expectedResult = record.get("Response.result");
 
 				boolean runMe = true;
 				if (targetIssueNumbers.size()>0) {

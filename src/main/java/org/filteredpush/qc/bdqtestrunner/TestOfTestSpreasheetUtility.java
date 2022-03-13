@@ -216,8 +216,8 @@ public class TestOfTestSpreasheetUtility {
 	    	
 	    	
 	    	// {GitHub Issue=0, Number=1, GUID=2, Output Type=3, Label=4, Dimension=5, 
-	    	// Line #=6, Input Fields=7, Output Fields=8, Response.Status=9, Response.Result=10, 
-	    	// Comment=11, Explanation=12}
+	    	// Line #=6, Input.data=7, Output.data=8, Response.status=9, Response.result=10, 
+	    	// Response.comment=11, Explanation=12}
 	    	//System.out.print(Integer.toString(line) + " " + record.get("GUID") + " ");
 	    	String inputfields = record.get("Input.data");
 	    	// handle a couple of special cases for splitting on comma: 
@@ -319,10 +319,10 @@ public class TestOfTestSpreasheetUtility {
 	    			separator = ",";
 	    		}
 	    		resultVals = resultVals.concat("}");
-	    		outputRow.put("Response.Result", resultVals);
+	    		outputRow.put("Response.result", resultVals);
 	    	}
 	    	if (resultTermValues.size()>0 && !outputRow.get("Response.status").equals("AMENDED") ) {
-	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
+	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.status is not AMENDED");
 	    		errors++;
 	    	}
 	    	printer.printRecord(outputRow.values());
