@@ -106,6 +106,10 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:vernacularName","dwc:vernacularName");
 		result.put("dwc:waterBody","dwc:waterBody");
 		result.put("dwc:year","dwc:year");
+		result.put("dwc:subfamily","dwc:subfamily");
+		result.put("dwc:genericName","dwc:genericName");
+		result.put("dwc:infragenericEpithet","dwc:infragenericEpithe");
+		result.put("dwc:cultivarEpithet","dwc:cultivarEpithet");
 		
 		return result;
 	}
@@ -144,20 +148,25 @@ public class TestOfTestSpreasheetUtility {
 		outputRow.put("GitHubIssueNo", "");
 		outputRow.put("GUID", "");
 		outputRow.put("Label", "");
-		outputRow.put("Response.Status", "");
-		outputRow.put("Response.Result", "");
-		outputRow.put("Response.Comment", "");
+		outputRow.put("Response.status", "");
+		outputRow.put("Response.result", "");
+		outputRow.put("Response.comment", "");
 		//outputRow.put("Explanation", "");
 		outputRow.put("IssuesWithThisRow", "");
 		
 		Map<String,String> terms = new HashMap<String,String>();
 		Map<String,String> outterms = new HashMap<String,String>();
-	    String filename = "/Test_data_7_2022-02-26.csv";
-	    filename = "/Test_data_9_2022-03-04.csv";
-	    filename = "/Test_data_10_2022-03-06.csv";
-	    filename = "/Test_data_11_2022-03-09.csv";
-	    filename = "/Test_data_12_2022-03-09.csv";
-	    filename = "/Test_data_13_2022-03-10.csv";
+	    String filename = "";
+	    // previous header structure.
+//	    filename = "/Test_data_7_2022-02-26.csv";
+//	    filename = "/Test_data_9_2022-03-04.csv";
+//	    filename = "/Test_data_10_2022-03-06.csv";
+//	    filename = "/Test_data_11_2022-03-09.csv";
+//	    filename = "/Test_data_12_2022-03-09.csv";
+//	    filename = "/Test_data_13_2022-03-10.csv";
+	    // new header structure with v14
+	    filename = "/Test_data_14_2022-03-14.csv";
+	    filename = "/Test_data_15_2022-03-14.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -180,10 +189,10 @@ public class TestOfTestSpreasheetUtility {
 	    		System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " unrecognized test class: " + testType);
 	    	}
 	    	outputRow.put("Label",testType + "_" + record.get("Label"));
-	    	String responseStatus =  record.get("Response.Status").trim();
-	    	outputRow.put("Response.Status", responseStatus);
-	    	outputRow.put("Response.Result", record.get("Response.Result"));
-	    	outputRow.put("Response.Comment", record.get("Comment"));
+	    	String responseStatus =  record.get("Response.status").trim();
+	    	outputRow.put("Response.status", responseStatus);
+	    	outputRow.put("Response.result", record.get("Response.result"));
+	    	outputRow.put("Response.comment", record.get("Response.comment"));
 	    	//outputRow.put("Explanation", record.get("Explanation"));
 	    	outputRow.put("IssuesWithThisRow", record.get("ISSUE"));
 	    	Iterator<String> iin = getInformationElements().keySet().iterator();
@@ -210,7 +219,7 @@ public class TestOfTestSpreasheetUtility {
 	    	// Line #=6, Input Fields=7, Output Fields=8, Response.Status=9, Response.Result=10, 
 	    	// Comment=11, Explanation=12}
 	    	//System.out.print(Integer.toString(line) + " " + record.get("GUID") + " ");
-	    	String inputfields = record.get("Input Fields");
+	    	String inputfields = record.get("Input.data");
 	    	// handle a couple of special cases for splitting on comma: 
 	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804)");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
@@ -256,7 +265,7 @@ public class TestOfTestSpreasheetUtility {
 	    			}
 	    		}
 	    	}
-	    	String outfields = record.get("Output Fields");
+	    	String outfields = record.get("Output.data");
 	    	List<String> outbits = Arrays.asList(outfields.split(","));
 	    	i = outbits.iterator();
 	    	while (i.hasNext()) {
@@ -312,7 +321,7 @@ public class TestOfTestSpreasheetUtility {
 	    		resultVals = resultVals.concat("}");
 	    		outputRow.put("Response.Result", resultVals);
 	    	}
-	    	if (resultTermValues.size()>0 && !outputRow.get("Response.Status").equals("AMENDED") ) {
+	    	if (resultTermValues.size()>0 && !outputRow.get("Response.status").equals("AMENDED") ) {
 	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.Status is not AMENDED");
 	    		errors++;
 	    	}
