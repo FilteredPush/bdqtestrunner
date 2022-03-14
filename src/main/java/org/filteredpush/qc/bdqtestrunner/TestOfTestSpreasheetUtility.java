@@ -191,7 +191,16 @@ public class TestOfTestSpreasheetUtility {
 	    	outputRow.put("Label",testType + "_" + record.get("Label"));
 	    	String responseStatus =  record.get("Response.status").trim();
 	    	outputRow.put("Response.status", responseStatus);
-	    	outputRow.put("Response.result", record.get("Response.result"));
+	    	String responseResultValue = record.get("Response.result");
+	    	String outputDataValue = record.get("Output.data");
+	    	if (outputDataValue.length()>0 && !responseResultValue.equals(outputDataValue)) { 
+	    		errors ++;
+	    		System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " missmatch between Response.result ["+responseResultValue+"] and Output.data ["+ outputDataValue +"] ");
+	    	}
+	    	if (responseResultValue.matches("^\"[0-9.]+\"$")) { 
+	    		responseResultValue = responseResultValue.replace("\"", "");
+	    	}
+	    	outputRow.put("Response.result", responseResultValue);
 	    	outputRow.put("Response.comment", record.get("Response.comment"));
 	    	//outputRow.put("Explanation", record.get("Explanation"));
 	    	outputRow.put("IssuesWithThisRow", record.get("ISSUE"));
