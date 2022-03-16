@@ -34,9 +34,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -74,6 +76,8 @@ public class TestRunner {
 	
 	private List<String> targetIssueNumbers;
 	
+	private Map<String,Integer> encounteredTests;
+	
 	/**
 	 * @throws IOException 
 	 * 
@@ -104,6 +108,7 @@ public class TestRunner {
 	    targetClasses.add("DwCOtherDateDQ");
 	    targetClasses.add("DwCSciNameDQ");
 	    targetIssueNumbers = new ArrayList<String>();  // empty=run all tests.
+	    encounteredTests = new HashMap<String,Integer>();
 	}
 	
 	public void setOutputFile(String filename) throws IOException {
@@ -183,6 +188,12 @@ public class TestRunner {
 									String foundGuid = ((Provides) annotation).value();
 									if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
 										logger.debug("Found implementation for: " + GUID);
+										// count how many times this test has been run
+										if (!encounteredTests.containsKey(GUID)) { 
+											encounteredTests.put(GUID, 0);
+										}
+										encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+										
 										List<String> paramValues = new ArrayList<String>();
 										for (Parameter parameter : javaMethod.getParameters()) {
 
@@ -354,6 +365,13 @@ public class TestRunner {
 						}
 					}
 				}
+			}
+			Set<String> encKeys = encounteredTests.keySet();
+			outFileWriter.write("Ran " + Integer.toString(encounteredTests.size()) + " tests against the validation data.\n" );
+			Iterator<String> ik = encKeys.iterator();
+			while (ik.hasNext()) { 
+				String key = ik.next();
+				outFileWriter.write(key + " " + Integer.toString(encounteredTests.get(key)) + "\n");
 			}
 
 		} catch (FileNotFoundException e) {
