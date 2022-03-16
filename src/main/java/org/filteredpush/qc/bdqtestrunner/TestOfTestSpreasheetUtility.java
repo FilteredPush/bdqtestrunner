@@ -167,6 +167,7 @@ public class TestOfTestSpreasheetUtility {
 	    // new header structure with v14
 	    filename = "/Test_data_14_2022-03-14.csv";
 	    filename = "/Test_data_15_2022-03-14.csv";
+	    filename = "/Test_data_16_2022-03-16.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -231,6 +232,8 @@ public class TestOfTestSpreasheetUtility {
 	    	String inputfields = record.get("Input.data");
 	    	// handle a couple of special cases for splitting on comma: 
 	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804)");
+	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811)");
+	    	inputfields = inputfields.replace(", 1822", "| 1822)");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
 	    	if (bits.isEmpty()) { 
