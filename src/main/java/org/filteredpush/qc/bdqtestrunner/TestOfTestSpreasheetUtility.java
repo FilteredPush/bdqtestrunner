@@ -168,6 +168,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_14_2022-03-14.csv";
 	    filename = "/Test_data_15_2022-03-14.csv";
 	    filename = "/Test_data_16_2022-03-16.csv";
+	    filename = "/Test_data_17_2022-03-17.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -231,9 +232,11 @@ public class TestOfTestSpreasheetUtility {
 	    	//System.out.print(Integer.toString(line) + " " + record.get("GUID") + " ");
 	    	String inputfields = record.get("Input.data");
 	    	// handle a couple of special cases for splitting on comma: 
-	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804)");
-	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811)");
-	    	inputfields = inputfields.replace(", 1822", "| 1822)");
+	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804");
+	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811");
+	    	inputfields = inputfields.replace("Adanson, 1763", "Adanson| 1763");
+	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreyes| 1867");
+	    	inputfields = inputfields.replace(", 1822", "| 1822");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
 	    	if (bits.isEmpty()) { 
@@ -259,8 +262,12 @@ public class TestOfTestSpreasheetUtility {
 	    				// output
 	    				if (outputRow.containsKey(term)) { 
 	    					String cleanedValue = value;
-	    					// handle a couple of special cases for splitting on comma: 
+	    					// handle the special cases for splitting on comma: 
 	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804)");
+	    					cleanedValue = cleanedValue.replace("Perry| 1811", "Perry, 1811");
+	    					cleanedValue = cleanedValue.replace("Adanson| 1763", "Adanson, 1763");
+	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreyes, 1867");
+	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
 	    					// trim off leading/trailing quotes.
 	    					if (cleanedValue.charAt(0)=='"') { 
@@ -283,9 +290,11 @@ public class TestOfTestSpreasheetUtility {
 	    	while (i.hasNext()) {
 	    		String bit = i.next();
 	    		List<String> subbits = Arrays.asList(bit.split("="));
-	    		if (bit.trim().length()>0 &&  subbits.size()!=2) { 
+	    		if (bit.trim().length()>0  &&  subbits.size()!=2 && !testType.equals("MEASURE")) { 
 	    			System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " " + bit );
 	    			errors++;
+	    		} else if (subbits.size()==1 && testType.equals("MEASURE")) { 
+	    			// skip, ok.
 	    		} else if (bit.trim().length() > 0) { 
 	    			// System.out.print(subbits.get(0) + " " + subbits.get(1));
 	    			String term = subbits.get(0).trim();
