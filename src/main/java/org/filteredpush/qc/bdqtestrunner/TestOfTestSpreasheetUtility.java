@@ -263,7 +263,7 @@ public class TestOfTestSpreasheetUtility {
 	    				if (outputRow.containsKey(term)) { 
 	    					String cleanedValue = value;
 	    					// handle the special cases for splitting on comma: 
-	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804)");
+	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804");
 	    					cleanedValue = cleanedValue.replace("Perry| 1811", "Perry, 1811");
 	    					cleanedValue = cleanedValue.replace("Adanson| 1763", "Adanson, 1763");
 	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreyes, 1867");
