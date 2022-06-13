@@ -57,6 +57,7 @@ import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQ;
+import org.filteredpush.qc.sciname.DwCSciNameDQDefaults;
 
 /**
  * @author mole
@@ -106,7 +107,8 @@ public class TestRunner {
 	    targetClasses.add("DwCGeoRefDQ");
 	    targetClasses.add("DwCEventDQ");
 	    targetClasses.add("DwCOtherDateDQ");
-	    targetClasses.add("DwCSciNameDQ");
+	    //  targetClasses.add("DwCSciNameDQ");  // @Parameter sourceAuthority default gbif not implemented here. 
+	    targetClasses.add("DwCSciNameDQDefaults");
 	    targetIssueNumbers = new ArrayList<String>();  // empty=run all tests.
 	    encounteredTests = new HashMap<String,Integer>();
 	}
@@ -143,9 +145,11 @@ public class TestRunner {
 		if (targetClasses.contains("DwCOtherDateDQ")) {
 			listToRun.add(DwCOtherDateDQ.class);
 		}
-		if (targetClasses.contains("DwCSciNameDQ")) {
+		if (targetClasses.contains("DwCSciNameDQDefaults")) {
+			listToRun.add(DwCSciNameDQDefaults.class);
+		} else if (targetClasses.contains("DwCSciNameDQ")) {
 			listToRun.add(DwCSciNameDQ.class);
-		}
+		} 
 		
 		try {
 
@@ -240,6 +244,115 @@ public class TestRunner {
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
 												} else if (paramValues.size()==4) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
+												} else if (paramValues.size()==5) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4));
+												} else if (paramValues.size()==6) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5));													
+												} else if (paramValues.size()==19) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5), 
+															paramValues.get(6), 
+															paramValues.get(7), 
+															paramValues.get(8), 
+															paramValues.get(9), 
+															paramValues.get(10), 
+															paramValues.get(11), 
+															paramValues.get(12), 
+															paramValues.get(13), 
+															paramValues.get(14), 
+															paramValues.get(15), 
+															paramValues.get(16), 
+															paramValues.get(17), 
+															paramValues.get(18));
+												} else if (paramValues.size()==20) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5), 
+															paramValues.get(6), 
+															paramValues.get(7), 
+															paramValues.get(8), 
+															paramValues.get(9), 
+															paramValues.get(10), 
+															paramValues.get(11), 
+															paramValues.get(12), 
+															paramValues.get(13), 
+															paramValues.get(14), 
+															paramValues.get(15), 
+															paramValues.get(16), 
+															paramValues.get(17), 
+															paramValues.get(18), 
+															paramValues.get(19));
+												} else if (paramValues.size()==23) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5), 
+															paramValues.get(6), 
+															paramValues.get(7), 
+															paramValues.get(8), 
+															paramValues.get(9), 
+															paramValues.get(10), 
+															paramValues.get(11), 
+															paramValues.get(12), 
+															paramValues.get(13), 
+															paramValues.get(14), 
+															paramValues.get(15), 
+															paramValues.get(16), 
+															paramValues.get(17), 
+															paramValues.get(18), 
+															paramValues.get(19), 
+															paramValues.get(20), 
+															paramValues.get(21), 
+															paramValues.get(22));
+												} else if (paramValues.size()==24) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5), 
+															paramValues.get(6), 
+															paramValues.get(7), 
+															paramValues.get(8), 
+															paramValues.get(9), 
+															paramValues.get(10), 
+															paramValues.get(11), 
+															paramValues.get(12), 
+															paramValues.get(13), 
+															paramValues.get(14), 
+															paramValues.get(15), 
+															paramValues.get(16), 
+															paramValues.get(17), 
+															paramValues.get(18), 
+															paramValues.get(19), 
+															paramValues.get(20), 
+															paramValues.get(21), 
+															paramValues.get(22), 
+															paramValues.get(23));
 												}
 												if (retval!=null) { 
 													logger.debug(retval.getResultState().getLabel());
