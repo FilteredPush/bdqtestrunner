@@ -138,6 +138,7 @@ public class TestOfTestSpreasheetUtility {
 		List<String> amendmentResponseStatusTerms = new ArrayList<String>();
 		amendmentResponseStatusTerms.add("AMENDED");
 		amendmentResponseStatusTerms.add("NOT_AMENDED");
+		amendmentResponseStatusTerms.add("FILLED_IN");
 		amendmentResponseStatusTerms.add("INTERNAL_PREREQUISITES_NOT_MET");
 		amendmentResponseStatusTerms.add("EXTERNAL_PREREQUISITES_NOT_MET");
 		
@@ -172,6 +173,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_18_2022-03-19.csv";
 	    filename = "/Test_data_19_2022-03-21.csv";
 	    filename = "/Test_data_22_2022-06-02.csv";
+	    filename = "/Test_data_23_2022-08-22.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -239,8 +241,12 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811");
 	    	inputfields = inputfields.replace("Adanson, 1763", "Adanson| 1763");
 	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreyes| 1867");
+	    	inputfields = inputfields.replace("Barker, 1996", "Barker| 1996");
 	    	inputfields = inputfields.replace(", 1822", "| 1822");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
+	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
+	    	inputfields = inputfields.replace("maxdepth=100", "maxdepth@100");
+	    	inputfields = inputfields.replace("?name=Puma", "?name@Puma");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
 	    	if (bits.isEmpty()) { 
 	    		System.out.println("Error in " + Integer.toString(line) + " " +inputfields);
@@ -272,6 +278,9 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreyes, 1867");
 	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
+	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
+	    					cleanedValue = cleanedValue.replace("maxdepth@100", "maxdepth=100");
+	    					cleanedValue = cleanedValue.replace("?name@Puma", "?name=Puma");
 	    					// trim off leading/trailing quotes.
 	    					if (cleanedValue.charAt(0)=='"') { 
 	    						cleanedValue = cleanedValue.substring(1);
@@ -345,8 +354,8 @@ public class TestOfTestSpreasheetUtility {
 	    		resultVals = resultVals.concat("}");
 	    		outputRow.put("Response.result", resultVals);
 	    	}
-	    	if (resultTermValues.size()>0 && !outputRow.get("Response.status").equals("AMENDED") ) {
-	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.status is not AMENDED");
+	    	if (resultTermValues.size()>0 && !(outputRow.get("Response.status").equals("AMENDED") || outputRow.get("Response.status").equals("FILLED_IN")) ) {
+	    		System.out.println("Error in Output " + dataID + " Line:" + Integer.toString(line) + " key:value pairs present when Response.status is not AMENDED or FILLED_IN");
 	    		errors++;
 	    	}
 	    	printer.printRecord(outputRow.values());
