@@ -29,6 +29,21 @@ mvn package
                                test_run_output.txt which will be overwritten
                                if it exists.
 
+Tests will be run from the specified classes and their superclasses, e.g. DwCSciNameDQDefaults extends DwCSciNameDQ, so
+specifying -c DwCScinNameDQDefaults will attempt to run all the tests in both classes, with only those where the number
+of parameters in the test method matches the number of parameters presented in a row of test validation data.  Log
+messages are written to the console by default, but can be redirected to a file for examination.  
+
+	$ java -jar bdqtestrunner-0.0.1-SNAPSHOT-7bf484e-executable.jar -c DwCSciNameDQDefaults > output.log
+
+Skipped tests may result from missing blocks invoking a method with a specified number of parameters (where the TestRunner
+class needs to add a block to invoke the method found by reflection with the correct number of parameters), or from a multiple
+methods for invoking the same test with different numbers of parameters (e.g. where one method takes a bdq:sourceAuthority parameter
+and the other method doesn't include this parameter but uses the default value).  Examining the log output can help diagnose 
+the causes of skipped tests, for example with: 
+
+	$ grep -A2 "No implementation of invocation" output.log  
+
 ## TG2 task group maintinance:
 
 ### Reformatting test data into expected input form from the (current as of August 2022) working source .xlsx spreadsheet 

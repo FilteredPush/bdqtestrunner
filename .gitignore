@@ -1,5 +1,6 @@
 bdqtestrunner-*-executable.jar
 output.csv
+output.log
 bdqtestrunner.log
 test_run_output.txt
 TG2_test_validation_data.csv
