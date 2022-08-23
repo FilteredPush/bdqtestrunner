@@ -602,7 +602,7 @@ public class TestRunner {
 				outFileWriter.write(key + " " + encounteredTests.get(key).toString() + "\n");
 				totalCount = totalCount + encounteredTests.get(key).getEncountered();
 			}
-			outFileWriter.write("Total test cases: " + Integer.toString(totalCount));
+			outFileWriter.write("Total test cases: " + Integer.toString(totalCount) + "\n");
 
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
