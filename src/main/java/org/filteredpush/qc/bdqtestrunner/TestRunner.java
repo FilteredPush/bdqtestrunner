@@ -35,6 +35,7 @@ import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +152,8 @@ public class TestRunner {
 			listToRun.add(DwCSciNameDQ.class);
 		} 
 		
+		Set<String> dataIDsRun = new HashSet<String>();
+		
 		try {
 
 			outFileWriter.write("Validation Test Data From: " + source);
@@ -175,6 +178,9 @@ public class TestRunner {
 				String label = record.get("Label");
 				String expectedStatus = record.get("Response.status");
 				String expectedResult = record.get("Response.result");
+				StringBuilder logMessage = new StringBuilder();
+				logMessage.append("Record, dataID=").append(dataID).append(" Issue: ").append(gitHubIssueNo).append(" ").append(label);
+				logger.debug(logMessage);
 
 				boolean runMe = true;
 				if (targetIssueNumbers.size()>0) {
@@ -185,6 +191,7 @@ public class TestRunner {
 				}
 				if (runMe) { 
 					for (Class cls : listToRun) { 
+						logger.debug(cls.getSimpleName());
 						Object instance = cls.getDeclaredConstructor().newInstance();
 						for (Method javaMethod : cls.getMethods()) {
 							for (Annotation annotation : javaMethod.getAnnotations()) {
@@ -192,11 +199,13 @@ public class TestRunner {
 									String foundGuid = ((Provides) annotation).value();
 									if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
 										logger.debug("Found implementation for: " + GUID);
+										logger.debug(javaMethod.getDeclaringClass());
+										logger.debug(javaMethod.toGenericString());
 										// count how many times this test has been run
 										if (!encounteredTests.containsKey(GUID)) { 
 											encounteredTests.put(GUID, 0);
 										}
-										encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+										//encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
 										
 										List<String> paramValues = new ArrayList<String>();
 										for (Parameter parameter : javaMethod.getParameters()) {
@@ -209,16 +218,22 @@ public class TestRunner {
 														parValue = record.get( ((ActedUpon)parAnnotation).value() );
 														logger.debug(parValue);
 														if (parValue.equals("[non-printing characters]")) { 
-															parValue=new String(Character.toChars(Character.CONTROL));
+															parValue=new String(Character.toChars('\1'));
 														}
+														if (parValue.equals("[null]")) { 
+															parValue=new String(Character.toChars('\0'));
+														}														
 														paramValues.add(parValue);
 													} else if (parAnnotation instanceof Consulted) {
 														logger.debug(parAnnotation.toString());
 														parValue = record.get( ((Consulted)parAnnotation).value() );
 														logger.debug(parValue);
 														if (parValue.equals("[non-printing characters]")) { 
-															parValue=new String(Character.toChars(Character.CONTROL));
+															parValue=new String(Character.toChars('\1'));
 														}
+														if (parValue.equals("[null]")) { 
+															parValue=new String(Character.toChars('\0'));
+														}														
 														paramValues.add(parValue);
 													} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 														// TODO: Handle parameters
@@ -236,22 +251,25 @@ public class TestRunner {
 											if (label.startsWith("VALIDATION_")) { 
 												DQResponse<ComplianceValue> retval = null;
 												logger.debug(paramValues.size());
-												if (paramValues.size()==1) { 
+												logger.debug(instance.getClass().getSimpleName());
+												logger.debug(javaMethod.toGenericString());
+												logger.debug(javaMethod.getParameterCount());
+												if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
-												} else if (paramValues.size()==2) { 
+												} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-												} else if (paramValues.size()==3) { 
+												} else if (paramValues.size()==3 && javaMethod.getParameterCount()==3) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
-												} else if (paramValues.size()==4) { 
+												} else if (paramValues.size()==4 && javaMethod.getParameterCount()==4) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
-												} else if (paramValues.size()==5) { 
+												} else if (paramValues.size()==5 && javaMethod.getParameterCount()==5) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
 															paramValues.get(2), 
 															paramValues.get(3), 
 															paramValues.get(4));
-												} else if (paramValues.size()==6) { 
+												} else if (paramValues.size()==6 && javaMethod.getParameterCount()==6) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
@@ -259,7 +277,7 @@ public class TestRunner {
 															paramValues.get(3), 
 															paramValues.get(4), 
 															paramValues.get(5));													
-												} else if (paramValues.size()==19) { 
+												} else if (paramValues.size()==19 && javaMethod.getParameterCount()==19) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
@@ -280,7 +298,7 @@ public class TestRunner {
 															paramValues.get(16), 
 															paramValues.get(17), 
 															paramValues.get(18));
-												} else if (paramValues.size()==20) { 
+												} else if (paramValues.size()==20 && javaMethod.getParameterCount()==20) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
@@ -302,7 +320,7 @@ public class TestRunner {
 															paramValues.get(17), 
 															paramValues.get(18), 
 															paramValues.get(19));
-												} else if (paramValues.size()==23) { 
+												} else if (paramValues.size()==23 && javaMethod.getParameterCount()==23) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
@@ -327,7 +345,7 @@ public class TestRunner {
 															paramValues.get(20), 
 															paramValues.get(21), 
 															paramValues.get(22));
-												} else if (paramValues.size()==24) { 
+												} else if (paramValues.size()==24 && javaMethod.getParameterCount()==24) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
 															paramValues.get(1), 
@@ -353,6 +371,8 @@ public class TestRunner {
 															paramValues.get(21), 
 															paramValues.get(22), 
 															paramValues.get(23));
+												} else { 
+													logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()));
 												}
 												if (retval!=null) { 
 													logger.debug(retval.getResultState().getLabel());
@@ -368,14 +388,51 @@ public class TestRunner {
 											} else if (label.startsWith("AMENDMENT_")) { 
 												try { 
 													DQResponse<AmendmentValue> retval = null;
-													if (paramValues.size()==1) { 
+													logger.debug(paramValues.size());
+													logger.debug(javaMethod.getDeclaringClass().getSimpleName());
+													logger.debug(javaMethod.toGenericString());
+													logger.debug(javaMethod.getParameterCount());
+													if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0));
-													} else if (paramValues.size()==2) { 
+													} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
 														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
-													} else if (paramValues.size()==3) { 
+													} else if (paramValues.size()==3 && javaMethod.getParameterCount()==3) { 
 														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
-													} else if (paramValues.size()==4) { 
+													} else if (paramValues.size()==4 && javaMethod.getParameterCount()==4) { 
 														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
+													} else if (paramValues.size()==5 && javaMethod.getParameterCount()==5) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+																paramValues.get(0), 
+																paramValues.get(1), 
+																paramValues.get(2), 
+																paramValues.get(3), 
+																paramValues.get(4));
+													} else if (paramValues.size()==22 && javaMethod.getParameterCount()==22) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+																paramValues.get(0), 
+																paramValues.get(1), 
+																paramValues.get(2), 
+																paramValues.get(3), 
+																paramValues.get(4), 
+																paramValues.get(5), 
+																paramValues.get(6), 
+																paramValues.get(7), 
+																paramValues.get(8), 
+																paramValues.get(9), 
+																paramValues.get(10), 
+																paramValues.get(11), 
+																paramValues.get(12), 
+																paramValues.get(13), 
+																paramValues.get(14), 
+																paramValues.get(15), 
+																paramValues.get(16), 
+																paramValues.get(17), 
+																paramValues.get(18), 
+																paramValues.get(19), 
+																paramValues.get(20), 
+																paramValues.get(21));
+													} else { 
+														logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()));
 													}
 													if (retval!=null) { 
 														resultStatus = retval.getResultState().getLabel();
@@ -407,11 +464,17 @@ public class TestRunner {
 												}
 											} else if (label.startsWith("MEASURE_")) { 
 												// TODO: Handle CompletenessValue and NumericalValue
+												logger.debug(paramValues.size());
+												logger.debug(javaMethod.getDeclaringClass().getSimpleName());
+												logger.debug(javaMethod.toGenericString());
+												logger.debug(javaMethod.getParameterCount());
 												DQResponse<ResultValue> retval = null;
-												if (paramValues.size()==1) { 
+												if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 													retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0));
-												} else if (paramValues.size()==2) { 
+												} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
 													retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+												} else { 
+													logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()));
 												}
 												if (retval!=null) { 	
 													resultStatus = retval.getResultState().getLabel();
@@ -442,6 +505,8 @@ public class TestRunner {
 													logger.debug(message);
 													outFileWriter.write(message.toString());
 													outFileWriter.write("\n");
+													dataIDsRun.add(dataID);
+													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
 												} else { 
 													StringBuilder message = new StringBuilder()
 															.append(dataID)
@@ -459,6 +524,8 @@ public class TestRunner {
 													logger.debug(message);
 													outFileWriter.write(message.toString());
 													outFileWriter.write("\n");
+													dataIDsRun.add(dataID);
+													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
 												}
 											} else { 
 												StringBuilder message = new StringBuilder()
@@ -466,6 +533,13 @@ public class TestRunner {
 														.append(" #").append(gitHubIssueNo)
 														.append(" Skipped ");
 												logger.debug(message);
+												if (dataIDsRun.contains(dataID)) {  
+													logger.debug("An implementation already run.");
+												} else {
+													outFileWriter.write(message.toString());
+													outFileWriter.write("\n");
+													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+												}
 											}
 										} catch (IllegalAccessException | IllegalArgumentException
 												| InvocationTargetException e) {
@@ -482,10 +556,13 @@ public class TestRunner {
 			Set<String> encKeys = encounteredTests.keySet();
 			outFileWriter.write("Ran " + Integer.toString(encounteredTests.size()) + " tests against the validation data.\n" );
 			Iterator<String> ik = encKeys.iterator();
+			Integer totalCount = 0;
 			while (ik.hasNext()) { 
 				String key = ik.next();
 				outFileWriter.write(key + " " + Integer.toString(encounteredTests.get(key)) + "\n");
+				totalCount = totalCount + encounteredTests.get(key);
 			}
+			outFileWriter.write("Total test cases: " + Integer.toString(totalCount));
 
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
