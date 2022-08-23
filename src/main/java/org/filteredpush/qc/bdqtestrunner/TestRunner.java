@@ -55,6 +55,7 @@ import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
 import org.datakurator.ffdq.api.result.NumericalValue;
 import org.filteredpush.qc.date.DwCEventDQ;
+import org.filteredpush.qc.date.DwCEventDQDefaults;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQ;
@@ -78,7 +79,7 @@ public class TestRunner {
 	
 	private List<String> targetIssueNumbers;
 	
-	private Map<String,Integer> encounteredTests;
+	private Map<String,Report> encounteredTests;
 	
 	/**
 	 * @throws IOException 
@@ -106,12 +107,13 @@ public class TestRunner {
 	    outFileWriter = new FileWriter("test_run_output.txt");
 	    targetClasses = new ArrayList<String>();
 	    targetClasses.add("DwCGeoRefDQ");
-	    targetClasses.add("DwCEventDQ");
+	    //targetClasses.add("DwCEventDQ");
+	    targetClasses.add("DwCEventDQDefaults");
 	    targetClasses.add("DwCOtherDateDQ");
 	    //  targetClasses.add("DwCSciNameDQ");  // @Parameter sourceAuthority default gbif not implemented here. 
 	    targetClasses.add("DwCSciNameDQDefaults");
 	    targetIssueNumbers = new ArrayList<String>();  // empty=run all tests.
-	    encounteredTests = new HashMap<String,Integer>();
+	    encounteredTests = new HashMap<String,Report>();
 	}
 	
 	public void setOutputFile(String filename) throws IOException {
@@ -122,7 +124,14 @@ public class TestRunner {
 	    outFileWriter = new FileWriter(filename);
 	}
 	
-	public void setListToRun(List<String> namesOfClassesToRun) { 
+	public void setListToRun(List<String> namesOfClassesToRun) throws Exception { 
+		Iterator<String> i = namesOfClassesToRun.iterator();
+		while (i.hasNext()) { 
+			String putativeClass = i.next();
+			if (!getSupportedClasses().contains(putativeClass)) { 
+				throw new Exception("Unsupported class: " + putativeClass);
+			}
+		}
 		targetClasses.clear();
 		targetClasses.addAll(namesOfClassesToRun);
 	}
@@ -130,6 +139,17 @@ public class TestRunner {
 	public void setIssuesToRun(List<String> namesOfIssueNumbersToRun) { 
 		targetIssueNumbers.clear();
 		targetIssueNumbers.addAll(namesOfIssueNumbersToRun);
+	}
+	
+	public Set<String> getSupportedClasses() { 
+		Set<String> supportedClasses = new HashSet<String>();
+		supportedClasses.add("DwCGeoRefDQ");
+		supportedClasses.add("DwCEventDQ");
+		supportedClasses.add("DwCEventDQDefaults");
+		supportedClasses.add("DwCOtherDateDQ");
+		supportedClasses.add("DwCSciNameDQ");
+		supportedClasses.add("DwCSciNameDQDefaults");
+		return supportedClasses;
 	}
 	
 	public boolean runTests() {
@@ -140,7 +160,9 @@ public class TestRunner {
 		if (targetClasses.contains("DwCGeoRefDQ")) {
 			listToRun.add(DwCGeoRefDQ.class);
 		}
-		if (targetClasses.contains("DwCEventDQ")) {
+		if (targetClasses.contains("DwCEventDQDefaults")) {
+			listToRun.add(DwCEventDQDefaults.class);
+		} else if (targetClasses.contains("DwCEventDQ")) { 
 			listToRun.add(DwCEventDQ.class);
 		}
 		if (targetClasses.contains("DwCOtherDateDQ")) {
@@ -203,9 +225,9 @@ public class TestRunner {
 										logger.debug(javaMethod.toGenericString());
 										// count how many times this test has been run
 										if (!encounteredTests.containsKey(GUID)) { 
-											encounteredTests.put(GUID, 0);
+											Report testReport = new Report(label,gitHubIssueNo);
+											encounteredTests.put(GUID, testReport);
 										}
-										//encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
 										
 										List<String> paramValues = new ArrayList<String>();
 										for (Parameter parameter : javaMethod.getParameters()) {
@@ -276,7 +298,16 @@ public class TestRunner {
 															paramValues.get(2), 
 															paramValues.get(3), 
 															paramValues.get(4), 
-															paramValues.get(5));													
+															paramValues.get(5));
+												} else if (paramValues.size()==7 && javaMethod.getParameterCount()==7) { 
+													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+															paramValues.get(0), 
+															paramValues.get(1), 
+															paramValues.get(2), 
+															paramValues.get(3), 
+															paramValues.get(4), 
+															paramValues.get(5), 
+															paramValues.get(6));													
 												} else if (paramValues.size()==19 && javaMethod.getParameterCount()==19) { 
 													retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 															paramValues.get(0), 
@@ -372,7 +403,7 @@ public class TestRunner {
 															paramValues.get(22), 
 															paramValues.get(23));
 												} else { 
-													logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()));
+													logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()) + " for " + GUID );
 												}
 												if (retval!=null) { 
 													logger.debug(retval.getResultState().getLabel());
@@ -407,6 +438,14 @@ public class TestRunner {
 																paramValues.get(2), 
 																paramValues.get(3), 
 																paramValues.get(4));
+													} else if (paramValues.size()==6 && javaMethod.getParameterCount()==6) { 
+														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+																paramValues.get(0), 
+																paramValues.get(1), 
+																paramValues.get(2), 
+																paramValues.get(3), 
+																paramValues.get(4), 
+																paramValues.get(5));			
 													} else if (paramValues.size()==22 && javaMethod.getParameterCount()==22) { 
 														retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
 																paramValues.get(0), 
@@ -506,7 +545,7 @@ public class TestRunner {
 													outFileWriter.write(message.toString());
 													outFileWriter.write("\n");
 													dataIDsRun.add(dataID);
-													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+													encounteredTests.get(GUID).incrementPass();
 												} else { 
 													StringBuilder message = new StringBuilder()
 															.append(dataID)
@@ -525,7 +564,7 @@ public class TestRunner {
 													outFileWriter.write(message.toString());
 													outFileWriter.write("\n");
 													dataIDsRun.add(dataID);
-													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+													encounteredTests.get(GUID).incrementFail();
 												}
 											} else { 
 												StringBuilder message = new StringBuilder()
@@ -538,7 +577,7 @@ public class TestRunner {
 												} else {
 													outFileWriter.write(message.toString());
 													outFileWriter.write("\n");
-													encounteredTests.put(GUID, encounteredTests.get(GUID)+1);
+													encounteredTests.get(GUID).incrementEncountered();;
 												}
 											}
 										} catch (IllegalAccessException | IllegalArgumentException
@@ -559,8 +598,9 @@ public class TestRunner {
 			Integer totalCount = 0;
 			while (ik.hasNext()) { 
 				String key = ik.next();
-				outFileWriter.write(key + " " + Integer.toString(encounteredTests.get(key)) + "\n");
-				totalCount = totalCount + encounteredTests.get(key);
+				//outFileWriter.write(key + " " + Integer.toString(encounteredTests.get(key).getEncountered()) + "\n");
+				outFileWriter.write(key + " " + encounteredTests.get(key).toString() + "\n");
+				totalCount = totalCount + encounteredTests.get(key).getEncountered();
 			}
 			outFileWriter.write("Total test cases: " + Integer.toString(totalCount));
 

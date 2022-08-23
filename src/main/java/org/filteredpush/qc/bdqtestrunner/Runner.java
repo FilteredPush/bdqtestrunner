@@ -48,7 +48,7 @@ public class Runner {
 		Options options = new Options();
 		options.addOption("i","input",true,"File (filename of a local file) containing test data against which to validate tests, if not specified https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv will be used.");
 		options.addOption("o","output",true,"File to which to write output, if specified must not exist.  Default if not specified is test_run_output.txt which will be overwritten if it exists.");
-		options.addOption("c","classes",true,"List of classes containing test implementations to validate against the test data (dafault DwCGeoRefDQ DwCEventDQ DwCOtherDateDQ DwCSciNameDQDefaults)");
+		options.addOption("c","classes",true,"List of classes containing test implementations to validate against the test data (default DwCGeoRefDQ DwCEventDQDefaults DwCOtherDateDQ DwCSciNameDQDefaults)");
 		options.addOption("g","gitHubIssues", true, "List of github issue numbers for tests to run, if not specified all tests will run, if specified only the listed tests will be run.");
 		options.addOption("h","help",false,"Show help.");
 
