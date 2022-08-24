@@ -21,6 +21,9 @@
     <Logger name="org.filteredpush.qc.georeference" level="DEBUG" >
       <AppenderRef ref="BDQTestRunnerLog"/>
     </Logger>
+    <Logger name="org.gbif.nameparser.NameParserGBIF" level="WARN" >
+      <AppenderRef ref="BDQTestRunnerLog"/>
+    </Logger>
     <Root level="WARN">
       <AppenderRef ref="Console"/>
     </Root>
