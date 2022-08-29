@@ -48,6 +48,11 @@
 			<artifactId>sci_name_qc</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.filteredpush</groupId>
+			<artifactId>rec_occur_qc</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>

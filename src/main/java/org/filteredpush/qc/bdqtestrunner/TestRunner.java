@@ -58,6 +58,7 @@ import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCEventDQDefaults;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
+import org.filteredpush.qc.metadata.DwCMetadataDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQDefaults;
 
@@ -106,6 +107,7 @@ public class TestRunner {
 	private void init() throws IOException { 
 	    outFileWriter = new FileWriter("test_run_output.txt");
 	    targetClasses = new ArrayList<String>();
+	    targetClasses.add("DwCMetadataDQ");
 	    targetClasses.add("DwCGeoRefDQ");
 	    //targetClasses.add("DwCEventDQ");
 	    targetClasses.add("DwCEventDQDefaults");
@@ -143,6 +145,7 @@ public class TestRunner {
 	
 	public Set<String> getSupportedClasses() { 
 		Set<String> supportedClasses = new HashSet<String>();
+		supportedClasses.add("DwCMetadataDQ");
 		supportedClasses.add("DwCGeoRefDQ");
 		supportedClasses.add("DwCEventDQ");
 		supportedClasses.add("DwCEventDQDefaults");
@@ -157,6 +160,9 @@ public class TestRunner {
 
 		@SuppressWarnings("rawtypes")
 		List<Class> listToRun = new ArrayList<Class>(); 
+		if (targetClasses.contains("DwCMetadataDQ")) {
+			listToRun.add(DwCMetadataDQ.class);
+		}
 		if (targetClasses.contains("DwCGeoRefDQ")) {
 			listToRun.add(DwCGeoRefDQ.class);
 		}
@@ -175,6 +181,8 @@ public class TestRunner {
 		} 
 		
 		Set<String> dataIDsRun = new HashSet<String>();
+		Map<String,String> dataIDsNotRun = new HashMap<String,String>();
+		int dataIDCounter = 0;
 		
 		try {
 
@@ -192,6 +200,7 @@ public class TestRunner {
 			CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
 			Map<String,Integer> header = records.getHeaderMap();
 			for (CSVRecord record : records) {
+				dataIDCounter ++;
 				String GUID = record.get("GUID");
 				String lineNumber = record.get("LineNumber");
 				String dataID = record.get("dataID");
@@ -591,6 +600,11 @@ public class TestRunner {
 						}
 					}
 				}
+				if (runMe==true) { 
+					if (! dataIDsRun.contains(dataID)) { 
+						dataIDsNotRun.put(dataID, gitHubIssueNo + " " + label);
+					}
+				}
 			}
 			Set<String> encKeys = encounteredTests.keySet();
 			outFileWriter.write("Ran " + Integer.toString(encounteredTests.size()) + " tests against the validation data.\n" );
@@ -602,7 +616,14 @@ public class TestRunner {
 				outFileWriter.write(key + " " + encounteredTests.get(key).toString() + "\n");
 				totalCount = totalCount + encounteredTests.get(key).getEncountered();
 			}
-			outFileWriter.write("Total test cases: " + Integer.toString(totalCount) + "\n");
+			outFileWriter.write("Test cases: " + Integer.toString(totalCount) + "\n");
+			Iterator<String> inr = dataIDsNotRun.keySet().iterator();
+			while (inr.hasNext()) { 
+				String notRun = inr.next();
+				outFileWriter.write("No test found: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
+			}
+			outFileWriter.write("Total cases with no implementation: " + Integer.toString(dataIDsNotRun.size()) + "\n");
+			outFileWriter.write("Total dataID validation rows: " + Integer.toString(dataIDCounter) + "\n");
 
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
