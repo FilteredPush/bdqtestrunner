@@ -58,6 +58,7 @@ import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCEventDQDefaults;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
+import org.filteredpush.qc.georeference.DwCGeoRefDQDefaults;
 import org.filteredpush.qc.metadata.DwCMetadataDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQDefaults;
@@ -148,6 +149,7 @@ public class TestRunner {
 		Set<String> supportedClasses = new HashSet<String>();
 		supportedClasses.add("DwCMetadataDQ");
 		supportedClasses.add("DwCGeoRefDQ");
+		supportedClasses.add("DwCGeoRefDQDefaults");
 		supportedClasses.add("DwCEventDQ");
 		supportedClasses.add("DwCEventDQDefaults");
 		supportedClasses.add("DwCOtherDateDQ");
@@ -166,6 +168,8 @@ public class TestRunner {
 		}
 		if (targetClasses.contains("DwCGeoRefDQ")) {
 			listToRun.add(DwCGeoRefDQ.class);
+		} else if (targetClasses.contains("DwCGeoRefDQDefaults")) {
+			listToRun.add(DwCGeoRefDQDefaults.class);
 		}
 		if (targetClasses.contains("DwCEventDQDefaults")) {
 			listToRun.add(DwCEventDQDefaults.class);
