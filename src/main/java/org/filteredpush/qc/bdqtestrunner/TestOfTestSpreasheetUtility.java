@@ -242,7 +242,7 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804");
 	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811");
 	    	inputfields = inputfields.replace("Adanson, 1763", "Adanson| 1763");
-	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreyes| 1867");
+	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreys| 1867");
 	    	inputfields = inputfields.replace("Barker, 1996", "Barker| 1996");
 	    	inputfields = inputfields.replace(", 1822", "| 1822");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
@@ -277,7 +277,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804");
 	    					cleanedValue = cleanedValue.replace("Perry| 1811", "Perry, 1811");
 	    					cleanedValue = cleanedValue.replace("Adanson| 1763", "Adanson, 1763");
-	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreyes, 1867");
+	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreys, 1867");
 	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
