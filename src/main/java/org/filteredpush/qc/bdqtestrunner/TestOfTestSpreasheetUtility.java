@@ -177,6 +177,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_24_2022-08-24.csv";
 	    filename = "/Test_data_26_2022-08-30.csv";
 	    filename = "/Test_data_28_2022-09-06.csv";
+	    filename = "/Test_data_29_2022-09-07.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -239,10 +240,12 @@ public class TestOfTestSpreasheetUtility {
 	    	// Response.comment=11, Explanation=12}
 	    	//System.out.print(Integer.toString(line) + " " + record.get("GUID") + " ");
 	    	String inputfields = record.get("Input.data");
+	    	inputfields = inputfields.replace('”', '"');  // handle alternative quote characters
 	    	// handle a couple of special cases for splitting on comma: 
 	    	inputfields = inputfields.replace("Desmarest, 1804", "Desmarest| 1804");
 	    	inputfields = inputfields.replace("Perry, 1811", "Perry| 1811");
 	    	inputfields = inputfields.replace("Adanson, 1763", "Adanson| 1763");
+	    	inputfields = inputfields.replace("Adans., 1763", "Adans.| 1763");
 	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreys| 1867");
 	    	inputfields = inputfields.replace("Barker, 1996", "Barker| 1996");
 	    	inputfields = inputfields.replace(", 1822", "| 1822");
@@ -278,6 +281,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804");
 	    					cleanedValue = cleanedValue.replace("Perry| 1811", "Perry, 1811");
 	    					cleanedValue = cleanedValue.replace("Adanson| 1763", "Adanson, 1763");
+	    					cleanedValue = cleanedValue.replace("Adans.| 1763", "Adans., 1763");
 	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreys, 1867");
 	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
