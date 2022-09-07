@@ -716,7 +716,7 @@ public class TestRunner {
 											for (Map.Entry<String, String> entry : obj.entrySet()) {
 												String key = entry.getKey();
 												String value = entry.getValue();
-												strretval.append("\"").append(key).append("\":\"").append(value).append("\"").append(separator);
+												strretval.append(separator).append("\"").append(key).append("\":\"").append(value).append("\"");
 												separator=",";
 											}
 											strretval.append("}");
@@ -766,11 +766,19 @@ public class TestRunner {
 							doComparison=false;
 						}
 						if (doComparison) { 
-							// TODO: Handle different order of terms in amendment results.
+							boolean sameResultValue = false;
+							if (!expectedResult.equals(resultValue))  {
+								logger.debug(expectedResult);
+								logger.debug(resultValue);
+								// TODO: Handle different order of terms in amendment results.
+								// split and compare list
+							} else { 
+								sameResultValue=true;
+							}
 							if (expectedStatus.equals(resultStatus) && (
 									expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
 									expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
-									expectedResult.equals(resultValue)) 
+									sameResultValue) 
 									) {
 								StringBuilder message = new StringBuilder()
 										.append(dataID)
