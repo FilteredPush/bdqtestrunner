@@ -109,7 +109,8 @@ public class TestRunner {
 	private void init() throws IOException { 
 	    outFileWriter = new FileWriter("test_run_output.txt");
 	    targetClasses = new ArrayList<String>();
-	    targetClasses.add("DwCMetadataDQ");
+	    //targetClasses.add("DwCMetadataDQ");
+	    targetClasses.add("DwCMetadataDQDefaults");
 	    targetClasses.add("DwCGeoRefDQ");
 	    //targetClasses.add("DwCEventDQ");
 	    targetClasses.add("DwCEventDQDefaults");
@@ -148,6 +149,7 @@ public class TestRunner {
 	public Set<String> getSupportedClasses() { 
 		Set<String> supportedClasses = new HashSet<String>();
 		supportedClasses.add("DwCMetadataDQ");
+		supportedClasses.add("DwCMetadataDQDefaults");
 		supportedClasses.add("DwCGeoRefDQ");
 		supportedClasses.add("DwCGeoRefDQDefaults");
 		supportedClasses.add("DwCEventDQ");
