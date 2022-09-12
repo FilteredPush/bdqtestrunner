@@ -496,7 +496,17 @@ public class TestRunner {
 										paramValues.get(3), 
 										paramValues.get(4), 
 										paramValues.get(5), 
-										paramValues.get(6));													
+										paramValues.get(6));
+							} else if (paramValues.size()==8 && javaMethod.getParameterCount()==8) { 
+								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+										paramValues.get(0), 
+										paramValues.get(1), 
+										paramValues.get(2), 
+										paramValues.get(3), 
+										paramValues.get(4), 
+										paramValues.get(5), 
+										paramValues.get(6), 
+										paramValues.get(7));								
 							} else if (paramValues.size()==19 && javaMethod.getParameterCount()==19) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 										paramValues.get(0), 
