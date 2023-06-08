@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.SequenceInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -92,7 +93,11 @@ public class TestRunner {
 	public TestRunner() throws IOException {
 		source = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv";
 		URL sourceUrl = new URL(source);
-		InputStreamReader inputStream = new InputStreamReader(sourceUrl.openStream());
+		String sourceNp = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data_nonprintingchars.csv";
+		URL sourceNpUrl = new URL(sourceNp);
+		SequenceInputStream streams = new SequenceInputStream(sourceUrl.openStream(), sourceNpUrl.openStream());
+		InputStreamReader inputStream = new InputStreamReader(streams);
+		//InputStreamReader inputStream = new InputStreamReader(sour`ceUrl.openStream());
 		in = new BufferedReader(inputStream);
 		init();
 		
