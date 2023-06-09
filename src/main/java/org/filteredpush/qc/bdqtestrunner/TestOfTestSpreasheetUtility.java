@@ -108,8 +108,10 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:year","dwc:year");
 		result.put("dwc:subfamily","dwc:subfamily");
 		result.put("dwc:genericName","dwc:genericName");
-		result.put("dwc:infragenericEpithet","dwc:infragenericEpithe");
+		result.put("dwc:infragenericEpithet","dwc:infragenericEpithet");
 		result.put("dwc:cultivarEpithet","dwc:cultivarEpithet");
+		result.put("dwc:individualCount","dwc:individualCount");
+		result.put("dwc:organismQuantity","dwc:organismQuantity");
 		
 		return result;
 	}
