@@ -184,6 +184,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_33_2022-09-12.csv";
 	    filename = "/Test_data_35_2022-11-11.csv";
 	    filename = "/Test_data_42_2023-03-30.csv";
+	    filename = "/Test_data_45_2023-06-11.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
@@ -259,6 +260,7 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
 	    	inputfields = inputfields.replace("maxdepth=100", "maxdepth@100");
 	    	inputfields = inputfields.replace("?name=Puma", "?name@Puma");
+	    	inputfields = inputfields.replace("taxon_profile.cfm?taxon_id=62947", "taxon_profile.cfm?taxon_id@62947");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
 	    	if (bits.isEmpty()) { 
 	    		System.out.println("Error in " + Integer.toString(line) + " " +inputfields);
@@ -294,6 +296,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
 	    					cleanedValue = cleanedValue.replace("maxdepth@100", "maxdepth=100");
 	    					cleanedValue = cleanedValue.replace("?name@Puma", "?name=Puma");
+	    					cleanedValue = cleanedValue.replace("taxon_profile.cfm?taxon_id@62947", "taxon_profile.cfm?taxon_id=62947");
 	    					// trim off leading/trailing quotes.
 	    					if (cleanedValue.charAt(0)=='"') { 
 	    						cleanedValue = cleanedValue.substring(1);
