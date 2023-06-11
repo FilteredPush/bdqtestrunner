@@ -54,6 +54,7 @@ import org.datakurator.ffdq.api.DQResponse;
 import org.datakurator.ffdq.api.ResultValue;
 import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
+import org.datakurator.ffdq.api.result.IssueValue;
 import org.datakurator.ffdq.api.result.NumericalValue;
 import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCEventDQDefaults;
@@ -644,6 +645,41 @@ public class TestRunner {
 								resultComment = retval.getComment();
 								doComparison = true;
 							}
+						} else if (label.startsWith("ISSUE_")) { 
+							DQResponse<IssueValue> retval = null;
+							logger.debug(paramValues.size());
+							logger.debug(instance.getClass().getSimpleName());
+							logger.debug(javaMethod.toGenericString());
+							logger.debug(javaMethod.getParameterCount());
+							if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, paramValues.get(0));
+							} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+							} else if (paramValues.size()==3 && javaMethod.getParameterCount()==3) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
+							} else if (paramValues.size()==4 && javaMethod.getParameterCount()==4) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2), paramValues.get(3));
+							} else if (paramValues.size()==5 && javaMethod.getParameterCount()==5) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, 
+										paramValues.get(0), 
+										paramValues.get(1), 
+										paramValues.get(2), 
+										paramValues.get(3), 
+										paramValues.get(4));
+							} else { 
+								logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()) + " for " + GUID );
+							}
+							if (retval!=null) { 
+								logger.debug(retval.getResultState().getLabel());
+								resultStatus = retval.getResultState().getLabel();
+								if (retval.getValue()!=null) { 
+									resultValue = retval.getValue().getLabel();
+								} else { 
+									resultValue = "";
+								}
+								resultComment = retval.getComment();
+								doComparison = true;
+							}
 						} else if (label.startsWith("AMENDMENT_")) { 
 							try { 
 								DQResponse<AmendmentValue> retval = null;
@@ -835,7 +871,7 @@ public class TestRunner {
 							StringBuilder message = new StringBuilder()
 									.append(dataID)
 									.append(" #").append(gitHubIssueNo)
-									.append(" Skipped ");
+									.append(" Skipped ").append("Type not found.");
 							logger.debug(message);
 							if (dataIDsRun.contains(dataID)) {  
 								logger.debug("An implementation already run.");
