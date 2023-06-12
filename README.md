@@ -46,7 +46,7 @@ the causes of skipped tests, for example with:
 
 ## TG2 task group maintinance:
 
-### Reformatting test data into expected input form from the (current as of August 2022) working source .xlsx spreadsheet 
+### Reformatting test data into expected input form from the (current as of June 2023 v46) working source .xlsx spreadsheet 
 
 Export Data sheet as csv to src/main/resources/ e.g. as src/main/resources/Test_data_23_2022-08-22.csv
 
@@ -67,4 +67,18 @@ If found, add appropriate special case handling in the vicinity of line 238, e.g
 
 Rerun TestOfTestSpreadsheetUtility.java, other errors may need correction by @tasilee in the source .xlxs spreadsheet.
 
-Output will be found as TG2_test_validation_data.csv, this file is tdwg:bdq/tg2/core/TG2_test_validation_data.csv
+Output will be found as TG2_test_validation_data.csv, 
+
+Copy (grep) all lines not containing "non-printing characters" from this file to tdwg:bdq/tg2/core/TG2_test_validation_data.csv
+
+Split out with grep the header non-printing character lines with grep into a separate file, then edit this file to replace that placeholder string with non-printing low ASCII characters.
+
+### Validating test implementations ###
+
+#### TIME tests, primarily in event_date_qc ####
+
+	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCOtherDateDQ,DwCEventDQDefaults,DwCMetadataDQDefaults -g 26,69,76,84,130,131,33,36,49,147,126,66,140,76,128,127,88,72,125,67,93,86,132,52,61 > output.log
+
+#### SPACE tests, primarily in geo_ref_qc ####
+
+	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCMetadataDQDefaults,DwCGeoRefDQDefaults -g 98,42 > output.log
