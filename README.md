@@ -77,8 +77,16 @@ Split out with grep the header non-printing character lines with grep into a sep
 
 #### TIME tests, primarily in event_date_qc ####
 
+From the bdqtestrunner directory using latest bdqtestrunner-{version}-{commit}-executable.jar:
+
+	mvn clean package
 	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCOtherDateDQ,DwCEventDQDefaults,DwCMetadataDQDefaults -g 26,69,76,84,130,131,33,36,49,147,126,66,140,76,128,127,88,72,125,67,93,86,132,52,61 > output.log
+	cat test_run_output.txt
+	grep Fail test_run_output.txt
 
 #### SPACE tests, primarily in geo_ref_qc ####
 
+From the bdqtestrunner directory using latest bdqtestrunner-{version}-{commit}-executable.jar:
+
+	mvn clean package
 	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCMetadataDQDefaults,DwCGeoRefDQDefaults -g 98,42 > output.log
