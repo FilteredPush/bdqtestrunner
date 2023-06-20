@@ -112,6 +112,8 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:cultivarEpithet","dwc:cultivarEpithet");
 		result.put("dwc:individualCount","dwc:individualCount");
 		result.put("dwc:organismQuantity","dwc:organismQuantity");
+		result.put("dwc:footprintWKT","dwc:footprintWKT");
+		result.put("dwc:coordinatePrecision","dwc:coordinatePrecision");
 		
 		return result;
 	}
