@@ -340,6 +340,7 @@ public class TestRunner {
 				for (Annotation annotation : javaMethod.getAnnotations()) {
 					if (annotation instanceof Provides) {
 						String foundGuid = ((Provides) annotation).value();
+						logger.debug(foundGuid);
 						if (foundGuid.equals(GUID) || "urn:uuid:".concat(GUID).equals(foundGuid)) {
 							logger.debug("Found implementation for: " + GUID);
 							logger.debug(javaMethod.getDeclaringClass());
