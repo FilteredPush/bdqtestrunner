@@ -56,6 +56,7 @@ import org.datakurator.ffdq.api.result.AmendmentValue;
 import org.datakurator.ffdq.api.result.ComplianceValue;
 import org.datakurator.ffdq.api.result.IssueValue;
 import org.datakurator.ffdq.api.result.NumericalValue;
+import org.filteredpush.qc.date.DateUtils;
 import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCEventDQDefaults;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
@@ -477,8 +478,14 @@ public class TestRunner {
 							if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
 							} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
-								if (javaMethod.getParameters()[1].getType().equals(SciNameSourceAuthority.class)) { 
-									SciNameSourceAuthority replacementParam = new SciNameSourceAuthority(paramValues.get(1));
+								if (javaMethod.getParameters()[1].getType().equals(SciNameSourceAuthority.class)) {
+									SciNameSourceAuthority replacementParam = new SciNameSourceAuthority();
+									if (DateUtils.isEmpty(paramValues.get(1))) { 
+										// pass null as parameter to select default source authority.
+										replacementParam = null;
+									} else {
+										replacementParam = new SciNameSourceAuthority(paramValues.get(1));
+									}
 									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), replacementParam);
 								} else { 
 									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
