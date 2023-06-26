@@ -65,7 +65,9 @@ import org.filteredpush.qc.metadata.DwCMetadataDQ;
 import org.filteredpush.qc.metadata.DwCMetadataDQDefaults;
 import org.filteredpush.qc.sciname.DwCSciNameDQ;
 import org.filteredpush.qc.sciname.DwCSciNameDQDefaults;
+import org.filteredpush.qc.sciname.SciNameSourceAuthority;
 import org.filteredpush.qc.sciname.SciNameUtils;
+import org.filteredpush.qc.sciname.SourceAuthorityException;
 
 /**
  * @author mole
@@ -475,7 +477,12 @@ public class TestRunner {
 							if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0));
 							} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
-								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+								if (javaMethod.getParameters()[1].getType().equals(SciNameSourceAuthority.class)) { 
+									SciNameSourceAuthority replacementParam = new SciNameSourceAuthority(paramValues.get(1));
+									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), replacementParam);
+								} else { 
+									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
+								}
 							} else if (paramValues.size()==3 && javaMethod.getParameterCount()==3) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1), paramValues.get(2));
 							} else if (paramValues.size()==4 && javaMethod.getParameterCount()==4) { 
@@ -887,6 +894,8 @@ public class TestRunner {
 						logger.debug(ex.getMessage());
 					} catch ( IllegalAccessException | IllegalArgumentException e) { 
 						logger.error(e.getMessage(), e);
+					} catch (SourceAuthorityException e) {
+						logger.error(e.getMessage(),e);
 					}
 				}
 			}
