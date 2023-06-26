@@ -69,9 +69,14 @@ Rerun TestOfTestSpreadsheetUtility.java, other errors may need correction by @ta
 
 Output will be found as TG2_test_validation_data.csv, 
 
-Copy (grep) all lines not containing "non-printing characters" from this file to tdwg:bdq/tg2/core/TG2_test_validation_data.csv
+Copy (grep) all lines not containing "non-printing characters" or "[null]" from this file to tdwg:bdq/tg2/core/TG2_test_validation_data.csv  
 
-Split out with grep the header non-printing character lines with grep into a separate file, then edit this file to replace that placeholder string with non-printing low ASCII characters.
+Split out with grep the header and lines containing "non-printing characters" or "[null]" into a separate file, then edit this file to replace that placeholder string with non-printing low ASCII characters.
+
+In vim, replacing [null] with 0x00 (ascii null), and [non-printing characters] with 0x0E 0x0F (shift out shift in) uses these commands: 
+
+	%s/\[non-printing characters\]/^N^O/g
+	%s/\[null\]/^@/g
 
 ### Validating test implementations ###
 
