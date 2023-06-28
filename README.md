@@ -79,6 +79,7 @@ Split out with grep the header and lines containing "non-printing characters" or
 	grep "\(non-printing characters\|\[null\]\)" TG2_test_validation_data.csv >> ../bdq/tg2/core/TG2_test_validation_data_nonprintingchars.csv
 
 In vim, replacing [null] with 0x00 (ascii null), and [non-printing characters] with 0x0E 0x0F (shift out shift in) uses these commands: 
+(where ^N is ctrl-V-N, ^O is ctrl-V-O, and ^@ is ctrl-V-@).
 
 	%s/\[non-printing characters\]/^N^O/g
 	%s/\[null\]/^@/g
