@@ -107,9 +107,9 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:waterBody","dwc:waterBody");
 		result.put("dwc:year","dwc:year");
 		result.put("dwc:subfamily","dwc:subfamily");
-		result.put("dwc:subfamily","dwc:superfamily");
-		result.put("dwc:subfamily","dwc:tribe");
-		result.put("dwc:subfamily","dwc:subtribe");
+		result.put("dwc:superfamily","dwc:superfamily");
+		result.put("dwc:tribe","dwc:tribe");
+		result.put("dwc:subtribe","dwc:subtribe");
 		result.put("dwc:genericName","dwc:genericName");
 		result.put("dwc:infragenericEpithet","dwc:infragenericEpithet");
 		result.put("dwc:cultivarEpithet","dwc:cultivarEpithet");
@@ -194,6 +194,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_50_2023-06-27.csv";
 	    filename = "/Test_data_52_2023-07-02.csv";
 	    filename = "/Test_data_53_2023-07-03.csv";
+	    filename = "/Test_data_54_2023-07-10.csv";
 	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    File inputfile = new File(urlinfile.toURI());
 	    Reader in = new FileReader(inputfile);
