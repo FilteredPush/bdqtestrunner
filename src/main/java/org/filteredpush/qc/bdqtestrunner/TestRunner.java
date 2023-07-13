@@ -527,7 +527,54 @@ public class TestRunner {
 										paramValues.get(4), 
 										paramValues.get(5), 
 										paramValues.get(6), 
-										paramValues.get(7));								
+										paramValues.get(7));		
+							} else if (paramValues.size()==10 && javaMethod.getParameterCount()==10) { 
+								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+										paramValues.get(0), 
+										paramValues.get(1), 
+										paramValues.get(2), 
+										paramValues.get(3), 
+										paramValues.get(4), 
+										paramValues.get(5), 
+										paramValues.get(6), 
+										paramValues.get(7), 
+										paramValues.get(8), 
+										paramValues.get(9));									
+							} else if (paramValues.size()==11 && javaMethod.getParameterCount()==11) { 
+								if (javaMethod.getParameters()[10].getType().equals(SciNameSourceAuthority.class)) {
+									SciNameSourceAuthority replacementParam = new SciNameSourceAuthority();
+									if (DateUtils.isEmpty(paramValues.get(10))) { 
+										// pass null as parameter to select default source authority.
+										replacementParam = null;
+									} else {
+										replacementParam = new SciNameSourceAuthority(paramValues.get(1));
+									}
+									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+											paramValues.get(0), 
+											paramValues.get(1), 
+											paramValues.get(2), 
+											paramValues.get(3), 
+											paramValues.get(4), 
+											paramValues.get(5), 
+											paramValues.get(6), 
+											paramValues.get(7), 
+											paramValues.get(8), 
+											paramValues.get(9), 
+											replacementParam);	
+								} else { 
+									retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+											paramValues.get(0), 
+											paramValues.get(1), 
+											paramValues.get(2), 
+											paramValues.get(3), 
+											paramValues.get(4), 
+											paramValues.get(5), 
+											paramValues.get(6), 
+											paramValues.get(7), 
+											paramValues.get(8), 
+											paramValues.get(9), 
+											paramValues.get(10));			
+								}
 							} else if (paramValues.size()==19 && javaMethod.getParameterCount()==19) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 										paramValues.get(0), 
