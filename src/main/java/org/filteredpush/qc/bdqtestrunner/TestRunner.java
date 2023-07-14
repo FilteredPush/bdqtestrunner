@@ -888,6 +888,134 @@ public class TestRunner {
 											paramValues.get(20), 
 											paramValues.get(21), 
 											paramValues.get(22));
+								} else if (paramValues.size()==25 && javaMethod.getParameterCount()==25) { 
+									if (javaMethod.getParameters()[24].getType().equals(SciNameSourceAuthority.class)) {
+										SciNameSourceAuthority replacementParam = new SciNameSourceAuthority();
+										if (DateUtils.isEmpty(paramValues.get(24))) { 
+											// pass null as parameter to select default source authority.
+											replacementParam = null;
+										} else {
+											replacementParam = new SciNameSourceAuthority(paramValues.get(24));
+										}
+										retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+												paramValues.get(0), 
+												paramValues.get(1), 
+												paramValues.get(2), 
+												paramValues.get(3), 
+												paramValues.get(4), 
+												paramValues.get(5), 
+												paramValues.get(6), 
+												paramValues.get(7), 
+												paramValues.get(8), 
+												paramValues.get(9), 
+												paramValues.get(10), 
+												paramValues.get(11), 
+												paramValues.get(12), 
+												paramValues.get(13), 
+												paramValues.get(14), 
+												paramValues.get(15), 
+												paramValues.get(16), 
+												paramValues.get(17), 
+												paramValues.get(18), 
+												paramValues.get(19), 
+												paramValues.get(20), 
+												paramValues.get(21), 
+												paramValues.get(22), 
+												paramValues.get(23), 
+												replacementParam);	
+									} else { 
+										retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+											paramValues.get(0), 
+											paramValues.get(1), 
+											paramValues.get(2), 
+											paramValues.get(3), 
+											paramValues.get(4), 
+											paramValues.get(5), 
+											paramValues.get(6), 
+											paramValues.get(7), 
+											paramValues.get(8), 
+											paramValues.get(9), 
+											paramValues.get(10), 
+											paramValues.get(11), 
+											paramValues.get(12), 
+											paramValues.get(13), 
+											paramValues.get(14), 
+											paramValues.get(15), 
+											paramValues.get(16), 
+											paramValues.get(17), 
+											paramValues.get(18), 
+											paramValues.get(19), 
+											paramValues.get(20), 
+											paramValues.get(21), 
+											paramValues.get(22), 
+											paramValues.get(23), 
+											paramValues.get(24));									
+									}
+								} else if (paramValues.size()==26 && javaMethod.getParameterCount()==26) { 
+									if (javaMethod.getParameters()[25].getType().equals(SciNameSourceAuthority.class)) {
+										SciNameSourceAuthority replacementParam = new SciNameSourceAuthority();
+										if (DateUtils.isEmpty(paramValues.get(25))) { 
+											// pass null as parameter to select default source authority.
+											replacementParam = null;
+										} else {
+											replacementParam = new SciNameSourceAuthority(paramValues.get(25));
+										}
+										retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+												paramValues.get(0), 
+												paramValues.get(1), 
+												paramValues.get(2), 
+												paramValues.get(3), 
+												paramValues.get(4), 
+												paramValues.get(5), 
+												paramValues.get(6), 
+												paramValues.get(7), 
+												paramValues.get(8), 
+												paramValues.get(9), 
+												paramValues.get(10), 
+												paramValues.get(11), 
+												paramValues.get(12), 
+												paramValues.get(13), 
+												paramValues.get(14), 
+												paramValues.get(15), 
+												paramValues.get(16), 
+												paramValues.get(17), 
+												paramValues.get(18), 
+												paramValues.get(19), 
+												paramValues.get(20), 
+												paramValues.get(21), 
+												paramValues.get(22), 
+												paramValues.get(23), 
+												paramValues.get(24), 
+												replacementParam);	
+									} else { 
+										retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+											paramValues.get(0), 
+											paramValues.get(1), 
+											paramValues.get(2), 
+											paramValues.get(3), 
+											paramValues.get(4), 
+											paramValues.get(5), 
+											paramValues.get(6), 
+											paramValues.get(7), 
+											paramValues.get(8), 
+											paramValues.get(9), 
+											paramValues.get(10), 
+											paramValues.get(11), 
+											paramValues.get(12), 
+											paramValues.get(13), 
+											paramValues.get(14), 
+											paramValues.get(15), 
+											paramValues.get(16), 
+											paramValues.get(17), 
+											paramValues.get(18), 
+											paramValues.get(19), 
+											paramValues.get(20), 
+											paramValues.get(21), 
+											paramValues.get(22), 
+											paramValues.get(23), 
+											paramValues.get(24), 
+											paramValues.get(25));									
+									}
 								} else { 
 									logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()));
 								}
