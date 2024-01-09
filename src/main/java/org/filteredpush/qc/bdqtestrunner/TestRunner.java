@@ -60,6 +60,7 @@ import org.filteredpush.qc.date.DateUtils;
 import org.filteredpush.qc.date.DwCEventDQ;
 import org.filteredpush.qc.date.DwCEventDQDefaults;
 import org.filteredpush.qc.date.DwCOtherDateDQ;
+import org.filteredpush.qc.date.DwCOtherDateDQDefaults;
 import org.filteredpush.qc.georeference.DwCGeoRefDQ;
 import org.filteredpush.qc.georeference.DwCGeoRefDQDefaults;
 import org.filteredpush.qc.metadata.DwCMetadataDQ;
@@ -124,7 +125,8 @@ public class TestRunner {
 	    targetClasses.add("DwCGeoRefDQ");
 	    //targetClasses.add("DwCEventDQ");
 	    targetClasses.add("DwCEventDQDefaults");
-	    targetClasses.add("DwCOtherDateDQ");
+	    //targetClasses.add("DwCOtherDateDQ");
+	    targetClasses.add("DwCOtherDateDQDefaults");
 	    //  targetClasses.add("DwCSciNameDQ");  // @Parameter sourceAuthority default gbif not implemented here. 
 	    targetClasses.add("DwCSciNameDQDefaults");
 	    targetIssueNumbers = new ArrayList<String>();  // empty=run all tests.
@@ -165,6 +167,7 @@ public class TestRunner {
 		supportedClasses.add("DwCEventDQ");
 		supportedClasses.add("DwCEventDQDefaults");
 		supportedClasses.add("DwCOtherDateDQ");
+		supportedClasses.add("DwCOtherDateDQDefaults");
 		supportedClasses.add("DwCSciNameDQ");
 		supportedClasses.add("DwCSciNameDQDefaults");
 		return supportedClasses;
@@ -194,6 +197,9 @@ public class TestRunner {
 		if (targetClasses.contains("DwCOtherDateDQ")) {
 			listToRun.add(DwCOtherDateDQ.class);
 		}
+		if (targetClasses.contains("DwCOtherDateDQDefaults")) {
+			listToRun.add(DwCOtherDateDQDefaults.class);
+		}		
 		if (targetClasses.contains("DwCSciNameDQDefaults")) {
 			listToRun.add(DwCSciNameDQDefaults.class);
 		} else if (targetClasses.contains("DwCSciNameDQ")) {
