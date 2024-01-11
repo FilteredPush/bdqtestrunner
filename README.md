@@ -58,7 +58,7 @@ filename in the last set of the value of the filename variable after line 159  e
 
    filename = "/Test_data_23_2022-08-22.csv";
 
-Execute the main method of TestIfTestSpreadsheetUtility.java, examine the console output for error messages concerning commas 
+Execute the main method of TestOfTestSpreadsheetUtility.java, examine the console output for error messages concerning commas 
 or equals signs that need special case handling (the parser for Input.data and Output.data is very crude), e.g. 
 
     Error in 217 Line:218 dwc:scientificName="Hakea decurrens ssp. Physocarpa (Barker
