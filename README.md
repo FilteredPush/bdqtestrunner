@@ -9,25 +9,28 @@ mvn package
 
     $ java -jar bdqtestrunner-{version}-{commit}-executable.jar -h
 
-    usage: java -jar bdqtestrunner-{version}-{gitcommit}-executable.jar
-     -c,--classes <arg>        List of classes containing test implementations
-                               to validate against the test data (dafault
-                               DwCGeoRefDQ DwCEventDQ DwCOtherDateDQ
-                               DwCSciNameDQ)
-     -g,--gitHubIssues <arg>   List of github issue numbers for tests to run,
-                               if not specified all tests will run, if
-                               specified only the listed tests will be run.
-     -h,--help                 Show help.
-     -i,--input <arg>          File (filename of a local file) containing test
-                               data against which to validate tests, if not
-                               specified
-                               https://raw.githubusercontent.com/tdwg/bdq/mast
-                               er/tg2/core/TG2_test_validation_data.csv will
-                               be used.
-     -o,--output <arg>         File to which to write output, if specified
-                               must not exist.  Default if not specified is
-                               test_run_output.txt which will be overwritten
-                               if it exists.
+	usage: java -jar bdqtestrunner-{version}-{gitcommit}-executable.jar
+	 -c,--classes <arg>        Comma separated list of classes containing test
+	                           implementations to validate against the test
+	                           data (default
+	                           DwCMetadataDQDefaults,DwCGeoRefDQDefaults,DwCEv
+	                           entDQDefaults,DwCOtherDateDQDefaults,DwCSciName
+	                           DQDefaults)
+	 -g,--gitHubIssues <arg>   Comma separated list of github issue numbers
+	                           for tests to run, if not specified all tests
+	                           will run, if specified only the listed tests
+	                           will be run.
+	 -h,--help                 Show help.
+	 -i,--input <arg>          File (filename of a local file) containing test
+	                           data against which to validate tests, if not
+	                           specified
+	                           https://raw.githubusercontent.com/tdwg/bdq/mast
+	                           er/tg2/core/TG2_test_validation_data.csv will
+	                           be used.
+	 -o,--output <arg>         File to which to write output, if specified
+	                           must not exist.  Default if not specified is
+	                           test_run_output.txt which will be overwritten
+	                           if it exists.
 
 Tests will be run from the specified classes and their superclasses, e.g. DwCSciNameDQDefaults extends DwCSciNameDQ, so
 specifying -c DwCScinNameDQDefaults will attempt to run all the tests in both classes, with only those where the number
