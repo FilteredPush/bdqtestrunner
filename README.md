@@ -91,7 +91,7 @@ In vim, replacing [null] with 0x00 (ascii null), and [non-printing characters] w
 From the bdqtestrunner directory using latest bdqtestrunner-{version}-{commit}-executable.jar:
 
 	mvn clean package
-	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCOtherDateDQ,DwCEventDQDefaults,DwCMetadataDQDefaults -g 26,69,76,84,130,131,33,36,49,147,126,66,140,76,128,127,88,72,125,67,93,86,132,52,61 > output.log
+	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCOtherDateDQDefaults,DwCEventDQDefaults,DwCMetadataDQDefaults -g 26,69,76,84,130,131,33,36,49,147,126,66,140,76,128,127,88,72,125,67,93,86,132,52,61 > output.log
 	cat test_run_output.txt
 	grep Fail test_run_output.txt
 

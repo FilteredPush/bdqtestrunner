@@ -37,6 +37,12 @@ public class TestOfTestSpreasheetUtility {
 
 	private static final Log logger = LogFactory.getLog(TestOfTestSpreasheetUtility.class);
 	
+	/**
+	 * Get a map of the supported information elements with each entry 
+	 * in the form "dwc:county","dwc:county".
+	 * 
+	 * @return a map of information elements
+	 */
 	public static Map<String,String> getInformationElements() { 
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		result.put("bdq:annotation","bdq:annotation");
@@ -122,12 +128,18 @@ public class TestOfTestSpreasheetUtility {
 	}
 	
 	/**
-	 * 
+	 * Default constructor.
 	 */
 	public TestOfTestSpreasheetUtility() {
 		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * Parse an (internally specified) spreadsheet of test specification data.
+	 * 
+	 * @throws IOException if unable to read file
+	 * @throws URISyntaxException if filename is not correctly hardcoded.
+	 */
 	private static void parseSourceSpreadsheet() throws IOException, URISyntaxException { 
 		
 		List<String> classList = new ArrayList<String>();
@@ -414,8 +426,9 @@ public class TestOfTestSpreasheetUtility {
 	}
 
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * Main method to launch parsing of a source spreadsheet from the command line.
+	 * 
+	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

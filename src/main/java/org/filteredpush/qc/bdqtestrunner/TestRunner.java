@@ -92,6 +92,8 @@ public class TestRunner {
 	private Map<String,Report> encounteredTests;
 	
 	/**
+	 * Default constructor, references test validation data file at expected location on tdwg github.
+	 * 
 	 * @throws IOException 
 	 * 
 	 */
@@ -108,6 +110,12 @@ public class TestRunner {
 		
 	}
 	
+	/**
+	 * Constructor specifying an alternative file of validation data to run tests against.
+	 * 
+	 * @param inputFile containing test validation data 
+	 * @throws IOException if unable to read inputFile
+	 */
 	public TestRunner(File inputFile) throws IOException { 
 		in = new FileReader(inputFile);
 		source = inputFile.getName();
@@ -133,6 +141,12 @@ public class TestRunner {
 	    encounteredTests = new HashMap<String,Report>();
 	}
 	
+	/**
+	 * Set the file into which output is to be written.
+	 * 
+	 * @param filename into which to write output, must not exist.
+	 * @throws IOException if filename exists.
+	 */
 	public void setOutputFile(String filename) throws IOException {
 		File testOutput = new File(filename);
 		if (testOutput.exists()) { 
@@ -141,6 +155,13 @@ public class TestRunner {
 	    outFileWriter = new FileWriter(filename);
 	}
 	
+	/**
+	 * Set the list of classes containing test immpelmettations to be run.
+	 * 
+	 * @param namesOfClassesToRun list of string class names, without paths.
+	 * @throws Exception if a class is unsupported.
+	 * @see getSupportedClasses()
+	 */
 	public void setListToRun(List<String> namesOfClassesToRun) throws Exception { 
 		Iterator<String> i = namesOfClassesToRun.iterator();
 		while (i.hasNext()) { 
@@ -153,11 +174,21 @@ public class TestRunner {
 		targetClasses.addAll(namesOfClassesToRun);
 	}
 	
+	/**
+	 * Set the list of issues to be run 
+	 * 
+	 * @param namesOfIssueNumbersToRun list of issue numbers to evaluate.
+	 */
 	public void setIssuesToRun(List<String> namesOfIssueNumbersToRun) { 
 		targetIssueNumbers.clear();
 		targetIssueNumbers.addAll(namesOfIssueNumbersToRun);
 	}
 	
+	/**
+	 * Obtain the set of classes that are supported by this implementation.
+	 * 
+	 * @return set of strings of supported class names, without paths.
+	 */
 	public Set<String> getSupportedClasses() { 
 		Set<String> supportedClasses = new HashSet<String>();
 		supportedClasses.add("DwCMetadataDQ");
@@ -173,6 +204,11 @@ public class TestRunner {
 		return supportedClasses;
 	}
 	
+	/**
+	 * Run the specified tests against the validation data.
+	 * 
+	 * @return false
+	 */
 	public boolean runTests() {
 		boolean result = false;
 
@@ -411,6 +447,28 @@ public class TestRunner {
 		return match;
 	}
 	
+	/**
+	 * Run a java method that implements a specified test against the validation data.
+	 * 
+	 * @param javaMethod
+	 * @param GUID
+	 * @param label
+	 * @param gitHubIssueNo
+	 * @param dataID
+	 * @param record
+	 * @param expectedStatus
+	 * @param expectedResult
+	 * @param dataIDsRun
+	 * @param outFileWriter
+	 * @return results as a set of string values
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IOException
+	 */
 	private Set<String> runMethod (Method javaMethod, String GUID, String label, String gitHubIssueNo, String dataID, CSVRecord record, String expectedStatus, String expectedResult, Set<String> dataIDsRun, FileWriter outFileWriter) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException { 
 		Class cls = javaMethod.getDeclaringClass();
 		logger.debug("Running method from: " + cls.getSimpleName());

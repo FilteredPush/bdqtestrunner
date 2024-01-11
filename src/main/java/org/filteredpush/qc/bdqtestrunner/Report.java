@@ -41,6 +41,12 @@ public class Report {
 	
 	private String testNumber;
 	
+	/**
+	 * Construct a report instance. 
+	 * 
+	 * @param testLabel the label for the test to report on
+	 * @param testNumber the number for the test to report on
+	 */
 	public Report(String testLabel, String testNumber) { 
 		encountered = 0;
 		pass = 0;
@@ -153,6 +159,9 @@ public class Report {
 		this.testNumber = testNumber;
 	}
 	
+	/**
+	 * @return the total number of tests reported on, pass plus fail.
+	 */
 	public Integer totalTests() { 
 		return pass + fail;
 	}
