@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -208,9 +210,12 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_53_2023-07-03.csv";
 	    filename = "/Test_data_54_2023-07-10.csv";
 	    filename = "/Test_data_57_2023-07-19.csv";
-	    URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
-	    File inputfile = new File(urlinfile.toURI());
-	    Reader in = new FileReader(inputfile);
+	    filename = "/Test_data_63_2023-12-15.csv";
+	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
+	    //File inputfile = new File(urlinfile.toURI());
+	    //Reader in = new FileReader(inputfile);
+	    InputStream is = TestOfTestSpreasheetUtility.class.getResourceAsStream(filename);
+	    Reader in = new InputStreamReader(is);
 	    String outputFileName = "TG2_test_validation_data.csv";
 	    CSVPrinter printer = new CSVPrinter(new FileWriter(outputFileName), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL));
 	    CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
@@ -219,7 +224,8 @@ public class TestOfTestSpreasheetUtility {
 	    int errors = 0;
 	    for (CSVRecord record : records) {
 	    	outputRow.put("LineNumber",Integer.toString(line));
-	    	outputRow.put("LineForTest",record.get("InTestLine #"));
+	    	//outputRow.put("LineForTest",record.get("InTestLine #"));
+	    	outputRow.put("LineForTest",record.get("LineForTest"));
 	    	String dataID = record.get("dataID");
 	    	outputRow.put("dataID",dataID);
 	    	outputRow.put("GitHubIssueNo",record.get("Number"));
@@ -283,6 +289,7 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
 	    	inputfields = inputfields.replace("maxdepth=100", "maxdepth@100");
 	    	inputfields = inputfields.replace("?name=Puma", "?name@Puma");
+	    	inputfields = inputfields.replace("check?dataset=API", "check?dataset@API");
 	    	inputfields = inputfields.replace("taxon_profile.cfm?taxon_id=62947", "taxon_profile.cfm?taxon_id@62947");
 	    	inputfields = inputfields.replace("POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20))", "POLYGON ((10 20| 11 20| 11 21| 10 21| 10 20))");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
@@ -320,6 +327,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
 	    					cleanedValue = cleanedValue.replace("maxdepth@100", "maxdepth=100");
 	    					cleanedValue = cleanedValue.replace("?name@Puma", "?name=Puma");
+	    					cleanedValue = cleanedValue.replace("check?dataset@API", "check?dataset=API");
 	    					cleanedValue = cleanedValue.replace("taxon_profile.cfm?taxon_id@62947", "taxon_profile.cfm?taxon_id=62947");
 	    					cleanedValue = cleanedValue.replace("POLYGON ((10 20| 11 20| 11 21| 10 21| 10 20))", "POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20))");
 	    					// trim off leading/trailing quotes.
