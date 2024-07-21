@@ -125,6 +125,11 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:organismQuantity","dwc:organismQuantity");
 		result.put("dwc:footprintWKT","dwc:footprintWKT");
 		result.put("dwc:coordinatePrecision","dwc:coordinatePrecision");
+		result.put("dwc:namePublishedInYear","dwc:namePublishedInYear");
+		result.put("dwc:sex","dwc:sex");
+		result.put("dwc:typeStatus","dwc:typeStatus");
+		result.put("dwc:pathway","dwc:pathway");
+		result.put("dwc:degreeOfEstablishment","dwc:degreeOfEstablishment");
 		
 		return result;
 	}
@@ -211,6 +216,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_54_2023-07-10.csv";
 	    filename = "/Test_data_57_2023-07-19.csv";
 	    filename = "/Test_data_63_2023-12-15.csv";
+	    filename = "/Test_data_67_2024_07_20.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
@@ -284,6 +290,7 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("Adans., 1763", "Adans.| 1763");
 	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreys| 1867");
 	    	inputfields = inputfields.replace("Barker, 1996", "Barker| 1996");
+	    	inputfields = inputfields.replace("Györfi, 1952", "Györfi| 1952");
 	    	inputfields = inputfields.replace(", 1822", "| 1822");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
 	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
@@ -322,6 +329,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("Adanson| 1763", "Adanson, 1763");
 	    					cleanedValue = cleanedValue.replace("Adans.| 1763", "Adans., 1763");
 	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreys, 1867");
+	    					cleanedValue = cleanedValue.replace("Györfi| 1952", "Györfi, 1952");
 	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");

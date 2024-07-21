@@ -785,6 +785,7 @@ public class TestRunner {
 										paramValues.get(23), 
 										paramValues.get(24));								
 							} else if (paramValues.size()==27 && javaMethod.getParameterCount()==27) { 
+								logger.debug(paramValues.get(20));
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 										paramValues.get(0), 
 										paramValues.get(1), 
