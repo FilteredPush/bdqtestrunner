@@ -592,6 +592,17 @@ public class TestRunner {
 										paramValues.get(5), 
 										paramValues.get(6), 
 										paramValues.get(7));		
+							} else if (paramValues.size()==9 && javaMethod.getParameterCount()==9) { 
+								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
+										paramValues.get(0), 
+										paramValues.get(1), 
+										paramValues.get(2), 
+										paramValues.get(3), 
+										paramValues.get(4), 
+										paramValues.get(5), 
+										paramValues.get(6), 
+										paramValues.get(7), 
+										paramValues.get(8));				
 							} else if (paramValues.size()==10 && javaMethod.getParameterCount()==10) { 
 								retval = (DQResponse<ComplianceValue>)javaMethod.invoke(instance, 
 										paramValues.get(0), 
@@ -904,6 +915,15 @@ public class TestRunner {
 											paramValues.get(3), 
 											paramValues.get(4), 
 											paramValues.get(5));			
+								} else if (paramValues.size()==7 && javaMethod.getParameterCount()==7) { 
+									retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
+											paramValues.get(0), 
+											paramValues.get(1), 
+											paramValues.get(2), 
+											paramValues.get(3), 
+											paramValues.get(4), 
+											paramValues.get(5), 
+											paramValues.get(6));			
 								} else if (paramValues.size()==22 && javaMethod.getParameterCount()==22) { 
 									retval = (DQResponse<AmendmentValue>)javaMethod.invoke(instance, 
 											paramValues.get(0), 
@@ -1193,7 +1213,7 @@ public class TestRunner {
 							StringBuilder message = new StringBuilder()
 									.append(dataID)
 									.append(" #").append(gitHubIssueNo)
-									.append(" Skipped ").append("Type not found.");
+									.append(" Skipped ").append("Type not found.").append("[").append(label).append("]:");
 							logger.debug(message);
 							if (dataIDsRun.contains(dataID)) {  
 								logger.debug("An implementation already run.");
