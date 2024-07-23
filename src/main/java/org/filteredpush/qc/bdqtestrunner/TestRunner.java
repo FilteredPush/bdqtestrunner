@@ -317,7 +317,11 @@ public class TestRunner {
 			Iterator<String> inr = dataIDsNotRun.keySet().iterator();
 			while (inr.hasNext()) { 
 				String notRun = inr.next();
-				outFileWriter.write("No test found: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
+				if (notRun.equals("dataID")) {  
+					logger.debug("No test found, probably header line: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
+				} else { 
+					outFileWriter.write("No test found: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
+				}
 			}
 			outFileWriter.write("Total cases with no implementation: " + Integer.toString(dataIDsNotRun.size()) + "\n");
 			outFileWriter.write("Total dataID validation rows: " + Integer.toString(dataIDCounter) + "\n");
