@@ -130,7 +130,7 @@ public class TestRunner {
 	    targetClasses = new ArrayList<String>();
 	    //targetClasses.add("DwCMetadataDQ");
 	    targetClasses.add("DwCMetadataDQDefaults");
-	    targetClasses.add("DwCGeoRefDQ");
+	    targetClasses.add("DwCGeoRefDQDefaults");
 	    //targetClasses.add("DwCEventDQ");
 	    targetClasses.add("DwCEventDQDefaults");
 	    //targetClasses.add("DwCOtherDateDQ");
