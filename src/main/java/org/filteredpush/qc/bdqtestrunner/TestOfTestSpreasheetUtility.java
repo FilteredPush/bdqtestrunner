@@ -219,6 +219,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_67_2024_07_20.csv";
 	    filename = "/Test_data_68_2024_07_22.csv";
 	    filename = "/Test_data_69_2024_07_22.csv";
+	    filename = "/Test_data_70_2024_07_22.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
@@ -298,7 +299,7 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
 	    	inputfields = inputfields.replace("maxdepth=100", "maxdepth@100");
 	    	inputfields = inputfields.replace("?name=Puma", "?name@Puma");
-	    	inputfields = inputfields.replace("check?dataset=API", "check?dataset@API");
+	    	inputfields = inputfields.replace("check?dataset=APNI", "check?dataset@APNI");
 	    	inputfields = inputfields.replace("taxon_profile.cfm?taxon_id=62947", "taxon_profile.cfm?taxon_id@62947");
 	    	inputfields = inputfields.replace("POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20))", "POLYGON ((10 20| 11 20| 11 21| 10 21| 10 20))");
 	    	List<String> bits = Arrays.asList(inputfields.split(","));
