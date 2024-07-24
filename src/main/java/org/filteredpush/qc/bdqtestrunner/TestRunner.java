@@ -265,6 +265,9 @@ public class TestRunner {
 				// get a line from the validation spreadsheet
 				dataIDCounter ++;
 				String GUID = record.get("GUID");
+				if (GUID!=null) { 
+					GUID = GUID.trim();
+				}
 				String lineNumber = record.get("LineNumber");
 				String dataID = record.get("dataID");
 				String lineForTest = record.get("LineForTest");
@@ -292,6 +295,7 @@ public class TestRunner {
 					// find if a method exists to run the specified test
 					// find the method with the largest number of matched parameters to the validation data
 					Method javaMethod = findBestMethod(listToRun, GUID, record);
+					logger.debug(javaMethod);
 					// run the selected method
 					if (javaMethod!=null) { 
 						dataIDsRun = runMethod(javaMethod, GUID, label, gitHubIssueNo, dataID, record, expectedStatus, expectedResult, dataIDsRun, outFileWriter);
@@ -378,6 +382,7 @@ public class TestRunner {
 	 */
 	private Method findBestMethod(List<Class> listToRun, String GUID, CSVRecord record) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Method match = null;
+		logger.debug("Looking For: [" + GUID + "]");
 		Map<Method,Boolean> potentialMethods = new HashMap<Method,Boolean>();  // method, hasBDQParameterWithData
 		for (Class cls : listToRun) { 
 			logger.debug(cls.getSimpleName());
@@ -398,9 +403,12 @@ public class TestRunner {
 								for (Annotation parAnnotation : parameter.getAnnotations()) {
 									if (parAnnotation instanceof ActedUpon ||
 										parAnnotation instanceof Consulted ||
+										parAnnotation instanceof org.datakurator.ffdq.annotations.ActedUpon ||
 										parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter
 									) {
 										parametersInMethod ++;
+									} else { 
+										logger.debug("Unrecognized type: " + parAnnotation.annotationType());
 									}
 									try { 
 										String parValue;
@@ -448,6 +456,7 @@ public class TestRunner {
 				}
 			}
 		}
+		logger.debug(match);
 		return match;
 	}
 	
