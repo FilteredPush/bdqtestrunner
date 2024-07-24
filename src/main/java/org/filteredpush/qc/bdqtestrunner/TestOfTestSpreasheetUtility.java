@@ -238,7 +238,7 @@ public class TestOfTestSpreasheetUtility {
 	    	String dataID = record.get("dataID");
 	    	outputRow.put("dataID",dataID);
 	    	outputRow.put("GitHubIssueNo",record.get("Number"));
-	    	outputRow.put("GUID",record.get("GUID"));
+	    	outputRow.put("GUID",record.get("GUID").trim());
 	    	String testType = record.get("Output Type"); 
 	    	if (!classList.contains(testType)) { 
 	    		errors ++;
