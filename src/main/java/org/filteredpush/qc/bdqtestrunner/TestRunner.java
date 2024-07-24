@@ -1238,7 +1238,11 @@ public class TestRunner {
 						}
 					} catch ( InvocationTargetException ex) { 
 						// such as same number of parameters, but different data types.
+						logger.debug(ex);
 						logger.debug(ex.getMessage());
+						if (ex.getCause()!=null) { 
+						 	logger.debug(ex.getCause().getMessage());
+						}
 					} catch ( IllegalAccessException | IllegalArgumentException e) { 
 						logger.error(e.getMessage(), e);
 					} catch (SourceAuthorityException e) {
