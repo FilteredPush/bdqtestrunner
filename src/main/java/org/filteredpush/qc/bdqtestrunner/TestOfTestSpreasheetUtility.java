@@ -340,7 +340,7 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
 	    					cleanedValue = cleanedValue.replace("maxdepth@100", "maxdepth=100");
 	    					cleanedValue = cleanedValue.replace("?name@Puma", "?name=Puma");
-	    					cleanedValue = cleanedValue.replace("check?dataset@API", "check?dataset=API");
+	    					cleanedValue = cleanedValue.replace("check?dataset@APNI", "check?dataset=APNI");
 	    					cleanedValue = cleanedValue.replace("taxon_profile.cfm?taxon_id@62947", "taxon_profile.cfm?taxon_id=62947");
 	    					cleanedValue = cleanedValue.replace("POLYGON ((10 20| 11 20| 11 21| 10 21| 10 20))", "POLYGON ((10 20, 11 20, 11 21, 10 21, 10 20))");
 	    					// trim off leading/trailing quotes.
