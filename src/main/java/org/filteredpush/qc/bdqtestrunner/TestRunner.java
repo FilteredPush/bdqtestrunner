@@ -1240,9 +1240,18 @@ public class TestRunner {
 						// such as same number of parameters, but different data types.
 						logger.debug(ex);
 						logger.debug(ex.getMessage());
+						String errorMessage = ex.getMessage();
 						if (ex.getCause()!=null) { 
 						 	logger.debug(ex.getCause().getMessage());
+							errorMessage = ex.getCause().getMessage();
 						}
+						StringBuilder message = new StringBuilder()
+								.append(dataID)
+								.append(" #").append(gitHubIssueNo)
+								.append("Exception: ").append(errorMessage);
+						outFileWriter.write(message.toString());
+						outFileWriter.write("\n");
+						encounteredTests.get(GUID).incrementFail();
 					} catch ( IllegalAccessException | IllegalArgumentException e) { 
 						logger.error(e.getMessage(), e);
 					} catch (SourceAuthorityException e) {
