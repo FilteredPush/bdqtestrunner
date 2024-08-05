@@ -226,6 +226,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_74_2024_07_30.csv";
 	    filename = "/Test_data_75_2024_07_31.csv";
 	    filename = "/Test_data_77_2024_08_02.csv";
+	    filename = "/Test_data_79_2024_08_04.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
@@ -281,7 +282,7 @@ public class TestOfTestSpreasheetUtility {
 	    		errors++;
 	    	}
 	    	if (testType.equals("AMENDMENT") && !amendmentResponseStatusTerms.contains(responseStatus)) { 
-	    		System.out.println("Error in " + Integer.toString(line) + " unrecognized response.status " +responseStatus + " for " + testType);
+	    		System.out.println("Error in line " + Integer.toString(line) + " unrecognized response.status [" +responseStatus + "] for " + testType);
 	    		errors++;
 	    	}
 	    	
