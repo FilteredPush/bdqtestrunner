@@ -130,6 +130,9 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:typeStatus","dwc:typeStatus");
 		result.put("dwc:pathway","dwc:pathway");
 		result.put("dwc:degreeOfEstablishment","dwc:degreeOfEstablishment");
+		result.put("bdq:taxonomyIsMarine","bdq:taxonomyIsMarine");
+		result.put("bdq:geospatialLand","bdq:geospatialLand");
+		result.put("bdq:assumptionOnUnknownBiome","bdq:assumptionOnUnknownBiome");
 		
 		return result;
 	}
@@ -227,6 +230,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_75_2024_07_31.csv";
 	    filename = "/Test_data_77_2024_08_02.csv";
 	    filename = "/Test_data_79_2024_08_04.csv";
+	    filename = "/Test_data_81_2024_08_20.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
@@ -301,7 +305,10 @@ public class TestOfTestSpreasheetUtility {
 	    	inputfields = inputfields.replace("Jeffreys, 1867", "Jeffreys| 1867");
 	    	inputfields = inputfields.replace("Barker, 1996", "Barker| 1996");
 	    	inputfields = inputfields.replace("Györfi, 1952", "Györfi| 1952");
+	    	inputfields = inputfields.replace("Millet, 1813", "Millet| 1813");
 	    	inputfields = inputfields.replace(", 1822", "| 1822");
+	    	inputfields = inputfields.replace("139.92,", "139.92|");
+	    	inputfields = inputfields.replace("degrees, x degrees", "degrees| x degrees");
 	    	inputfields = inputfields.replace(" 10m, ", " 10m| ");
 	    	inputfields = inputfields.replace("maxElevation=100", "maxElevation@100");
 	    	inputfields = inputfields.replace("maxdepth=100", "maxdepth@100");
@@ -340,6 +347,9 @@ public class TestOfTestSpreasheetUtility {
 	    					cleanedValue = cleanedValue.replace("Adans.| 1763", "Adans., 1763");
 	    					cleanedValue = cleanedValue.replace("Jeffreys| 1867", "Jeffreys, 1867");
 	    					cleanedValue = cleanedValue.replace("Györfi| 1952", "Györfi, 1952");
+	    					cleanedValue = cleanedValue.replace("Millet| 1813", "Millet, 1813");
+	    					cleanedValue = cleanedValue.replace("139.92|", "139.92,");
+	    					cleanedValue = cleanedValue.replace("degrees| x degrees", "degrees, x degrees");
 	    					cleanedValue = cleanedValue.replace("| 1822", ", 1822");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
 	    					cleanedValue = cleanedValue.replace("maxElevation@100", "maxElevation=100");
@@ -389,6 +399,9 @@ public class TestOfTestSpreasheetUtility {
 	    					// handle a couple of special cases for splitting on comma: 
 	    					cleanedValue = cleanedValue.replace("Desmarest| 1804", "Desmarest, 1804)");
 	    					cleanedValue = cleanedValue.replace(" 10m| ", " 10m, ");
+	    					cleanedValue = cleanedValue.replace("Millet| 1813", "Millet, 1813");
+	    					cleanedValue = cleanedValue.replace("139.92|", "139.92,");
+	    					cleanedValue = cleanedValue.replace("degrees| x degrees", "degrees, x degrees");
 	    					// trim off leading/trailing quotes.
 	    					if (cleanedValue.charAt(0)=='"') { 
 	    						cleanedValue = cleanedValue.substring(1);
