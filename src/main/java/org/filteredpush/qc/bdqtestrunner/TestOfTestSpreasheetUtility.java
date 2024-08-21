@@ -130,9 +130,11 @@ public class TestOfTestSpreasheetUtility {
 		result.put("dwc:typeStatus","dwc:typeStatus");
 		result.put("dwc:pathway","dwc:pathway");
 		result.put("dwc:degreeOfEstablishment","dwc:degreeOfEstablishment");
-		result.put("bdq:taxonomyIsMarine","bdq:taxonomyIsMarine");
+		result.put("bdq:taxonIsMarine","bdq:taxonIsMarine");
 		result.put("bdq:geospatialLand","bdq:geospatialLand");
 		result.put("bdq:assumptionOnUnknownBiome","bdq:assumptionOnUnknownBiome");
+		result.put("bdq:latestValidDate","bdq:latestValidDate");
+		result.put("bdq:earliestValidDate","bdq:earliestValidDate");
 		
 		return result;
 	}
@@ -231,6 +233,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_77_2024_08_02.csv";
 	    filename = "/Test_data_79_2024_08_04.csv";
 	    filename = "/Test_data_81_2024_08_20.csv";
+	    filename = "/Test_data_82_2024_08_20.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
@@ -253,6 +256,10 @@ public class TestOfTestSpreasheetUtility {
 	    	String testType = record.get("Output Type"); 
 	    	if (!classList.contains(testType)) { 
 	    		errors ++;
+	    		if (dataID==null || dataID.length()==0) { 
+	    			System.out.println("Unable to read dataID, is there a blank line?");
+	    		}
+	    		System.out.println(dataID);
 	    		System.out.println("Error in " + dataID + " Line:" + Integer.toString(line) + " unrecognized test class: " + testType);
 	    	}
 	    	outputRow.put("Label",testType + "_" + record.get("Label"));
