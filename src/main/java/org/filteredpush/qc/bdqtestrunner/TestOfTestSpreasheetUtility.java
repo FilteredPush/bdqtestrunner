@@ -234,6 +234,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_79_2024_08_04.csv";
 	    filename = "/Test_data_81_2024_08_20.csv";
 	    filename = "/Test_data_82_2024_08_20.csv";
+	    filename = "/Test_data_84_2024_08_21.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
