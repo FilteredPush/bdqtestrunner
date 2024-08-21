@@ -423,7 +423,13 @@ public class TestRunner {
 											parametersInData++;
 										} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 											logger.debug(parAnnotation.toString());
-											parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+											try { 
+												parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+											} catch (IllegalArgumentException exe) {
+												// not all parameters may be in input.  log and assume empty.
+												logger.debug(exe);
+												parValue = "";
+											}
 											parametersInData++;
 											if (!SciNameUtils.isEmpty(parValue)) { 
 												hasBdqParameterWithValue = true;
@@ -529,7 +535,13 @@ public class TestRunner {
 									paramValues.add(parValue);
 								} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 									logger.debug(parAnnotation.toString());
-									parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+									try {
+										parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+									} catch (IllegalArgumentException exe) {
+										// not all parameters may be in input.  log and assume empty.
+										parValue = "";
+										logger.debug("Set " + ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name()  + " to Empty.");
+									}
 									logger.debug(parValue);
 									if (SciNameUtils.isEmpty(parValue)) { 
 										parValue=null;
