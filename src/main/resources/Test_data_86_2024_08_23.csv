@@ -1299,8 +1299,3 @@ dwc:verbatimSRS=""EPSG:4326"", dwc:decimalLatitude="""", dwc:decimalLongitude=""
 "https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1157,7,"dwc:decimalLatitude=""-65"", dwc:decimalLongitude=""140"", dwc:countryCode=""AX""",,"RUN_HAS_RESULT","NOT_ISSUE","Coordinates do not fall within the buffered distance of the centroid  for the dwc:countryCode",,,
 "https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1158,8,"dwc:decimalLatitude="""", dwc:decimalLongitude="""", dwc:countryCode=""AX""",,"INTERNAL_PREREQUISITES_NOT_MET",,"All input data terms are EMPTY",,,
 "https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1159,9,"dwc:decimalLatitude=""0.0"", dwc:decimalLongitude=""90.0"", dwc:countryCode=""AX"",bdq:sourceAuthority=""https://invalid/invalidservice""",,"EXTERNAL_PREREQUISITES_NOT_MET",,"the bdq:sourceAuthority was unavailable or unreachable",,,
-,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,
-,,,,"DataIDs 237-248 available",,,,,,,,,,,
