@@ -885,6 +885,14 @@ public class TestRunner {
 										paramValues.get(2), 
 										paramValues.get(3), 
 										paramValues.get(4));
+							} else if (paramValues.size()==6 && javaMethod.getParameterCount()==6) { 
+								retval = (DQResponse<IssueValue>)javaMethod.invoke(instance, 
+										paramValues.get(0), 
+										paramValues.get(1), 
+										paramValues.get(2), 
+										paramValues.get(3), 
+										paramValues.get(4), 
+										paramValues.get(5));								
 							} else { 
 								logger.error("No implementation of invocation with needed number of parameters " + Integer.toString(paramValues.size()) + " for " + GUID );
 							}
