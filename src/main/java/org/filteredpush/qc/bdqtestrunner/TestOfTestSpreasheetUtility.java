@@ -48,7 +48,6 @@ public class TestOfTestSpreasheetUtility {
 	public static Map<String,String> getInformationElements() { 
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		result.put("bdq:annotation","bdq:annotation");
-		result.put("bdq:annotationAlertif","bdq:annotationAlertif");
 		result.put("bdq:sourceAuthority","bdq:sourceAuthority");
 		result.put("dc:type","dc:type");
 		result.put("dcterms:license","dcterms:license");
