@@ -290,6 +290,7 @@ public class TestRunner {
 					// if duplicate dataID values exist in the spreadsheet.
 					runMe=false;
 					logger.debug("Test already run (? duplicate dataID in input spreadsheet ?) for "  + dataID + " #" + gitHubIssueNo +  " on line number " + lineNumber );
+					outFileWriter.write("Test already run (? duplicate dataID in input spreadsheet ?) for "  + dataID + " #" + gitHubIssueNo +  " on line number " + lineNumber );
 				}
 				if (runMe) { 
 					// find if a method exists to run the specified test
@@ -319,16 +320,19 @@ public class TestRunner {
 			}
 			outFileWriter.write("Test cases: " + Integer.toString(totalCount) + "\n");
 			Iterator<String> inr = dataIDsNotRun.keySet().iterator();
+			int headersEncountered = 0;
 			while (inr.hasNext()) { 
 				String notRun = inr.next();
-				if (notRun.equals("dataID")) {  
+				if (notRun.equals("dataID")) {
+					headersEncountered++;
 					logger.debug("No test found, probably header line: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
 				} else { 
 					outFileWriter.write("No test found: " + notRun + " " + dataIDsNotRun.get(notRun).toString() + "\n");
 				}
 			}
-			outFileWriter.write("Total cases with no implementation: " + Integer.toString(dataIDsNotRun.size()) + "\n");
+			outFileWriter.write("Total cases with no implementation: " + Integer.toString(dataIDsNotRun.size() - headersEncountered) + "\n");
 			outFileWriter.write("Total dataID validation rows: " + Integer.toString(dataIDCounter) + "\n");
+			outFileWriter.write("Header Lines Skipped: " + Integer.toString(headersEncountered) + "\n");
 
 		} catch (FileNotFoundException e) {
 			logger.debug(e.getMessage(), e);
