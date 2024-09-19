@@ -40,7 +40,7 @@ public class TestOfTestSpreasheetUtility {
 	private static final Log logger = LogFactory.getLog(TestOfTestSpreasheetUtility.class);
 	
 	/**
-	 * Get a map of the supported information elements with each entry 
+	 * Get a map of the supported information elements (and Parameters) with each entry 
 	 * in the form "dwc:county","dwc:county".
 	 * 
 	 * @return a map of information elements
@@ -48,6 +48,7 @@ public class TestOfTestSpreasheetUtility {
 	public static Map<String,String> getInformationElements() { 
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		result.put("bdq:annotation","bdq:annotation");
+		result.put("bdq:annotationAlertif","bdq:annotationAlertif");
 		result.put("bdq:sourceAuthority","bdq:sourceAuthority");
 		result.put("dc:type","dc:type");
 		result.put("dcterms:license","dcterms:license");
@@ -237,6 +238,7 @@ public class TestOfTestSpreasheetUtility {
 	    filename = "/Test_data_84_2024_08_21.csv";
 	    filename = "/Test_data_86_2024_08_23.csv";
 	    filename = "/Test_data_87_2024_08_26.csv";
+	    filename = "/Test_data_91_2024_09_19.csv";
 	    //URL urlinfile = TestOfTestSpreasheetUtility.class.getResource(filename);
 	    //File inputfile = new File(urlinfile.toURI());
 	    //Reader in = new FileReader(inputfile);
