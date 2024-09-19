@@ -290,7 +290,7 @@ public class TestRunner {
 					// if duplicate dataID values exist in the spreadsheet.
 					runMe=false;
 					logger.debug("Test already run (? duplicate dataID in input spreadsheet ?) for "  + dataID + " #" + gitHubIssueNo +  " on line number " + lineNumber );
-					outFileWriter.write("Test already run (? duplicate dataID in input spreadsheet ?) for "  + dataID + " #" + gitHubIssueNo +  " on line number " + lineNumber );
+					outFileWriter.write("Test already run (? duplicate dataID in input spreadsheet ?) for "  + dataID + " #" + gitHubIssueNo +  " on line number " + lineNumber  + "\n");
 				}
 				if (runMe) { 
 					// find if a method exists to run the specified test
