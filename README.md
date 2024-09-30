@@ -103,9 +103,11 @@ From the bdqtestrunner directory using latest bdqtestrunner-{version}-{commit}-e
 	cat test_run_output.txt
 	grep Fail test_run_output.txt
 
-#### SPACE tests, primarily in geo_ref_qc ####
+#### All tests, using default classes ####
 
 From the bdqtestrunner directory using latest bdqtestrunner-{version}-{commit}-executable.jar:
 
 	mvn clean package
-	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar -c DwCMetadataDQDefaults,DwCGeoRefDQDefaults -g 98,42 > output.log
+	java -jar bdqtestrunner-0.0.1-SNAPSHOT-4bd1f04-executable.jar > output.log
+	cat test_run_output.txt
+	grep Fail test_run_output.txt
