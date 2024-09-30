@@ -530,6 +530,7 @@ public class TestRunner {
 									logger.debug(parAnnotation.toString());
 									parValue = record.get( ((Consulted)parAnnotation).value() );
 									logger.debug(parValue);
+									logger.debug(parValue==null);
 									if (parValue.equals("[non-printing characters]")) { 
 										parValue=new String(Character.toChars('\1'));
 									}
