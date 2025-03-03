@@ -49,7 +49,7 @@ the causes of skipped tests, for example with:
 
 ## TG2 task group maintinance:
 
-### Reformatting test data into expected input form from the (current as of June 2023 v46) working source .xlsx spreadsheet 
+### Reformatting test validation data into expected input form from the (current as of June 2023 v46) working source .xlsx spreadsheet 
 
 Export Data sheet as csv to src/main/resources/ e.g. as src/main/resources/Test_data_23_2022-08-22.csv
 
@@ -94,6 +94,8 @@ In vim, replacing [null] with 0x00 (ascii null), and [non-printing characters] w
 
 	%s/\[non-printing characters\]/^N^O/g
 	%s/\[null\]/^@/g
+
+Commit and push these changes to github, as the test runner accesses the validation data from the github repository by default, unless -i is used to specify a local file.
 
 ### Validating test implementations ###
 
