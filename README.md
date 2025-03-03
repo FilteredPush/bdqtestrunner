@@ -53,6 +53,9 @@ the causes of skipped tests, for example with:
 
 Export Data sheet as csv to src/main/resources/ e.g. as src/main/resources/Test_data_23_2022-08-22.csv
 
+Fix the column headers to match those of other Test_data_ csv files (remove columns from end of list, correct several names that have
+diverged in the .xlsx file, remove three extraneous rows from end of the sheet).
+
 Edit src/main/java/org/filteredpush/qc/bdqtestrunner/TestOfTestSpreadsheetUtility.java to add a this file as the value of
 filename in the last set of the value of the filename variable after line 159  e.g. add the line below as line 175:
 

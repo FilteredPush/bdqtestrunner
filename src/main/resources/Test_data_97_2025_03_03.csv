@@ -1311,7 +1311,3 @@ dwc:verbatimSRS=""EPSG:4326"", dwc:decimalLatitude="""", dwc:decimalLongitude=""
 "9/20/2024","https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1294,88,"dwc:decimalLatitude=""[null]"", dwc:decimalLongitude="""", dwc:countryCode=""AR""",,"INTERNAL_PREREQUISITES_NOT_MET",,"dwc:decimalLatitude is bdq:Empty",
 "9/20/2024","https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1295,99,"dwc:decimalLatitude=""[non-printing characters]"", dwc:decimalLongitude="""", dwc:countryCode=""AU""",,"INTERNAL_PREREQUISITES_NOT_MET",,"dwc:decimalLatitude is bdq:Empty",
 "9/20/2024","https://github.com/tdwg/bdq/issues/287",287,"256e51b3-1e08-4349-bb7e-5186631c3f8e","ISSUE","COORDINATES_CENTEROFCOUNTRY","SPACE",1296,11,"dwc:decimalLatitude=""-34.184199"", dwc:decimalLongitude=""-65.509403"", dwc:countryCode=""AR"", bdq:sourceAuthority=""https://invalid/invalidservice""",,"EXTERNAL_PREREQUISITES_NOT_MET",,"The bdq:sourceAuthority is unavailable or unreachable",
-,,,,,,,,,,,,,,
-,,,,,,,1306,"next",,,,,,
-,,,,,,,1303,"available",,,,,,
-,,,,,,,1304,"available",,,,,,
