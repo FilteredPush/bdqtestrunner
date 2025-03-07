@@ -4,6 +4,8 @@ output.log
 bdqtestrunner.log
 test_run_output.txt
 TG2_test_validation_data.csv
+test_run_output_v97.txt
+test_run_output_v98.txt
 .classpath
 .project
 .settings/
