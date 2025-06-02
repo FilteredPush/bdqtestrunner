@@ -98,9 +98,9 @@ public class TestRunner {
 	 * 
 	 */
 	public TestRunner() throws IOException {
-		source = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data.csv";
+		source = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/_review/docs/guide/implementers/TG2_test_validation_data.csv";
 		URL sourceUrl = new URL(source);
-		String sourceNp = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/core/TG2_test_validation_data_nonprintingchars.csv";
+		String sourceNp = "https://raw.githubusercontent.com/tdwg/bdq/master/tg2/_review/docs/guide/implementers/TG2_test_validation_data_nonprintingchars.csv";
 		URL sourceNpUrl = new URL(sourceNp);
 		SequenceInputStream streams = new SequenceInputStream(sourceUrl.openStream(), sourceNpUrl.openStream());
 		InputStreamReader inputStream = new InputStreamReader(streams);
