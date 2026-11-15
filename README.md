@@ -25,8 +25,8 @@ mvn package
 	                           data against which to validate tests, if not
 	                           specified
 	                           https://raw.githubusercontent.com/tdwg/bdq/mast
-	                           er/tg2/core/TG2_test_validation_data.csv will
-	                           be used.
+	                           er/tg2/_review/docs/guide/implementers/TG2_test
+	                           _validation_data.csv will be used.
 	 -o,--output <arg>         File to which to write output, if specified
 	                           must not exist.  Default if not specified is
 	                           test_run_output.txt which will be overwritten

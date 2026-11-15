@@ -366,6 +366,34 @@ public class TestRunner {
 	}
 	
 	/**
+	 * Obtain the value of a parameter of a test from a row of the validation data.  The BDQ standard
+	 * renamed the parameters from bdq: to bdqval: (tdwg/bdq#330), so implementations and validation
+	 * data may use either prefix; look the parameter up by the name in the implementation's
+	 * annotation first, then by the same local name with the other prefix.
+	 *
+	 * @param record row of validation data
+	 * @param name the parameter name from the implementation's Parameter annotation, e.g.
+	 *   bdq:sourceAuthority
+	 * @return the value of the parameter in the record
+	 * @throws IllegalArgumentException if the record has no column for the parameter under either name
+	 */
+	private static String getParameterValue(CSVRecord record, String name) {
+		if (record.isMapped(name)) {
+			return record.get(name);
+		}
+		String alternative = null;
+		if (name.startsWith("bdq:")) {
+			alternative = "bdqval:" + name.substring("bdq:".length());
+		} else if (name.startsWith("bdqval:")) {
+			alternative = "bdq:" + name.substring("bdqval:".length());
+		}
+		if (alternative != null && record.isMapped(alternative)) {
+			return record.get(alternative);
+		}
+		return record.get(name);
+	}
+
+	/**
 	 * Given a GUID for a test a list of classes that may contain an implementation, and 
 	 * a data record, return the most appropriate implementation (parameterized, or using 
 	 * parameter defaults) of the test to run. 
@@ -428,7 +456,7 @@ public class TestRunner {
 										} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 											logger.debug(parAnnotation.toString());
 											try { 
-												parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+												parValue = getParameterValue(record, ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name());
 											} catch (IllegalArgumentException exe) {
 												// not all parameters may be in input.  log and assume empty.
 												logger.debug(exe);
@@ -541,7 +569,7 @@ public class TestRunner {
 								} else if (parAnnotation instanceof org.datakurator.ffdq.annotations.Parameter) { 
 									logger.debug(parAnnotation.toString());
 									try {
-										parValue = record.get( ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name() );
+										parValue = getParameterValue(record, ((org.datakurator.ffdq.annotations.Parameter)parAnnotation).name());
 									} catch (IllegalArgumentException exe) {
 										// not all parameters may be in input.  log and assume empty.
 										parValue = "";
