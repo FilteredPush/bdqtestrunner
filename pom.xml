@@ -32,32 +32,56 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- Versions of artifacts that the FilteredPush libraries bring. The libraries pin these
+			     only for their own builds: dependencyManagement is not passed on, so an application
+			     sets them itself. -->
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>2.22.3</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.gbif</groupId>
+				<artifactId>dwc-api</artifactId>
+				<version>2.1.15</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>2.0.20</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.filteredpush</groupId>
 			<artifactId>event_date_qc</artifactId>
-			<version>3.1.2</version>
+			<version>3.1.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.filteredpush</groupId>
 			<artifactId>geo_ref_qc</artifactId>
-			<version>2.1.3</version>
+			<version>2.1.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.filteredpush</groupId>
 			<artifactId>sci_name_qc</artifactId>
-			<version>1.2.2</version>
+			<version>1.2.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.filteredpush</groupId>
 			<artifactId>rec_occur_qc</artifactId>
-			<version>1.1.2</version>
+			<version>1.1.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
+			<version>1.3.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -126,13 +150,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.15.0</version>
 				<configuration>
-					<verbose>true</verbose>
-					<fork>true</fork>
-					<compilerVersion>1.8</compilerVersion>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>17</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -151,9 +171,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>3.12.0</version>
 				<configuration>
-					<source>8</source>
+					<source>17</source>
 				</configuration>
 				<executions>
 					<execution>
@@ -167,7 +187,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.6.2</version>
+				<configuration>
+					<!-- the shaded jars are written to their own files; the installed and deployed pom
+					     must keep the library's dependencies (shade's default is a dependency-reduced pom) -->
+					<createDependencyReducedPom>false</createDependencyReducedPom>
+				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>
