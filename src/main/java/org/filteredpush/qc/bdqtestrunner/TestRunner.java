@@ -299,7 +299,14 @@ public class TestRunner {
 					logger.debug(javaMethod);
 					// run the selected method
 					if (javaMethod!=null) { 
-						dataIDsRun = runMethod(javaMethod, GUID, label, gitHubIssueNo, dataID, record, expectedStatus, expectedResult, dataIDsRun, outFileWriter);
+						try {
+							dataIDsRun = runMethod(javaMethod, GUID, label, gitHubIssueNo, dataID, record, expectedStatus, expectedResult, dataIDsRun, outFileWriter);
+						} catch (RuntimeException e) {
+							// an error in the runner itself on this row (e.g. a Response without a status):
+							// report it and go on with the other rows
+							reportFailureToRun(outFileWriter, dataID, gitHubIssueNo, GUID, label, record, "runner error", e);
+							dataIDsRun.add(dataID);
+						}
 					}
 				}
 				if (runMe==true) { 
@@ -319,6 +326,14 @@ public class TestRunner {
 				totalCount = totalCount + encounteredTests.get(key).getEncountered();
 			}
 			outFileWriter.write("Test cases: " + Integer.toString(totalCount) + "\n");
+			int totalPass = 0;
+			int totalFail = 0;
+			for (Report report : encounteredTests.values()) {
+				totalPass += report.getPass();
+				totalFail += report.getFail();
+			}
+			outFileWriter.write("Passed: " + totalPass + "  Failed: " + totalFail
+					+ (totalFail > 0 ? "  (grep Fail for the failing rows)" : "") + "\n");
 			Iterator<String> inr = dataIDsNotRun.keySet().iterator();
 			int headersEncountered = 0;
 			while (inr.hasNext()) { 
@@ -1258,24 +1273,22 @@ public class TestRunner {
 								StringBuilder message = new StringBuilder()
 										.append(dataID)
 										.append(" #").append(gitHubIssueNo)
-										.append(" Pass");
+										.append(" Pass ").append(rowName(label, record));
 								logger.debug(message);
 								outFileWriter.write(message.toString());
 								outFileWriter.write("\n");
 								dataIDsRun.add(dataID);
 								encounteredTests.get(GUID).incrementPass();
 							} else { 
+								// what was tested, what was expected, what was returned, and why (the comment)
 								StringBuilder message = new StringBuilder()
 										.append(dataID)
 										.append(" #").append(gitHubIssueNo)
-										.append(" Fail got ");
-								if (!resultStatus.equals(expectedStatus)) { 
-									message.append(resultStatus).append(" expected ").append(expectedStatus);
-									message.append(" ").append(resultComment);
-								} else { 
-									message.append(resultValue).append(" expected ").append(expectedResult);
-									message.append(" ").append(resultComment);
-								}
+										.append(" Fail ").append(rowName(label, record))
+										.append(": expected ").append(expectedStatus).append(expectedResult.isEmpty() ? "" : " " + expectedResult)
+										.append(", got ").append(resultStatus).append(resultValue.isEmpty() ? "" : " " + resultValue)
+										.append("; comment: ").append(resultComment)
+										.append("; inputs: ").append(describeInputs(record));
 								logger.debug(resultStatus);
 								logger.debug(resultValue);
 								logger.debug(resultComment);
@@ -1300,30 +1313,83 @@ public class TestRunner {
 							}
 						}
 					} catch ( InvocationTargetException ex) { 
-						// such as same number of parameters, but different data types.
-						logger.debug(ex);
-						logger.debug(ex.getMessage());
-						String errorMessage = ex.getMessage();
-						if (ex.getCause()!=null) { 
-						 	logger.debug(ex.getCause().getMessage());
-							errorMessage = ex.getCause().getMessage();
-						}
-						StringBuilder message = new StringBuilder()
-								.append(dataID)
-								.append(" #").append(gitHubIssueNo)
-								.append("Exception: ").append(errorMessage);
-						outFileWriter.write(message.toString());
-						outFileWriter.write("\n");
-						encounteredTests.get(GUID).incrementFail();
-					} catch ( IllegalAccessException | IllegalArgumentException e) { 
-						logger.error(e.getMessage(), e);
-					} catch (SourceAuthorityException e) {
-						logger.error(e.getMessage(),e);
+						// the test method threw an exception (or, with the same number of parameters,
+						// different data types)
+						Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+						reportFailureToRun(outFileWriter, dataID, gitHubIssueNo, GUID, label, record, "exception", cause);
+					} catch ( IllegalAccessException | IllegalArgumentException | SourceAuthorityException e) { 
+						reportFailureToRun(outFileWriter, dataID, gitHubIssueNo, GUID, label, record, "could not run the test", e);
 					}
 				}
 			}
 		}
 		return dataIDsRun;
 	}
-	
+
+	/** Columns of the validation data that are not inputs to the Test. */
+	private static final Set<String> NOT_INPUTS = new HashSet<String>(java.util.Arrays.asList(
+			"LineNumber", "dataID", "LineForTest", "GitHubIssueNo", "GUID", "Label",
+			"Response.status", "Response.result", "Response.comment", "IssuesWithThisRow"));
+
+	/**
+	 * @param label the Test's label
+	 * @param record a row of the validation data
+	 * @return the Test and the line of the validation data, e.g. "VALIDATION_DAY_STANDARD (line 1234)"
+	 */
+	static String rowName(String label, CSVRecord record) {
+		String line = record.isMapped("LineNumber") ? record.get("LineNumber") : Long.toString(record.getRecordNumber());
+		return label + " (line " + line + ")";
+	}
+
+	/**
+	 * @param record a row of the validation data
+	 * @return its non-empty input values, e.g. dwc:day="32", in the order of the columns
+	 */
+	static String describeInputs(CSVRecord record) {
+		StringBuilder inputs = new StringBuilder();
+		for (Map.Entry<String, String> e : record.toMap().entrySet()) {
+			if (!NOT_INPUTS.contains(e.getKey()) && e.getValue() != null && !e.getValue().isEmpty()) {
+				if (inputs.length() > 0) { inputs.append(", "); }
+				inputs.append(e.getKey()).append("=\"").append(e.getValue()).append("\"");
+			}
+		}
+		return inputs.length() == 0 ? "(none)" : inputs.toString();
+	}
+
+	/**
+	 * @param t a throwable
+	 * @return where it was thrown, outside the JDK: e.g. "at DateUtils.specificToMonthScale(DateUtils.java:2967)"
+	 */
+	static String thrownAt(Throwable t) {
+		for (StackTraceElement e : t.getStackTrace()) {
+			String c = e.getClassName();
+			if (!(c.startsWith("java.") || c.startsWith("jdk.") || c.startsWith("sun."))) {
+				return "at " + c.substring(c.lastIndexOf('.') + 1) + "." + e.getMethodName()
+						+ "(" + e.getFileName() + ":" + e.getLineNumber() + ")";
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * Report a row whose Test could not be run, or threw, as a failure: a "Fail" line in the output
+	 * (with the Test, line, exception, where it was thrown, and the inputs), the stack trace in the log,
+	 * and a failure in the counts.
+	 */
+	private void reportFailureToRun(FileWriter outFileWriter, String dataID, String gitHubIssueNo, String GUID,
+			String label, CSVRecord record, String what, Throwable t) throws IOException {
+		StringBuilder message = new StringBuilder()
+				.append(dataID)
+				.append(" #").append(gitHubIssueNo)
+				.append(" Fail ").append(rowName(label, record))
+				.append(": ").append(what).append(" ").append(t.getClass().getSimpleName()).append(": ").append(t.getMessage())
+				.append(" ").append(thrownAt(t))
+				.append("; inputs: ").append(describeInputs(record));
+		logger.warn(message, t);
+		outFileWriter.write(message.toString());
+		outFileWriter.write("\n");
+		if (encounteredTests.get(GUID) != null) {
+			encounteredTests.get(GUID).incrementFail();
+		}
+	}
 }
