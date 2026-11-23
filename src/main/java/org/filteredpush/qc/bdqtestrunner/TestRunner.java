@@ -1230,7 +1230,13 @@ public class TestRunner {
 							logger.debug(javaMethod.toGenericString());
 							logger.debug(javaMethod.getParameterCount());
 							DQResponse<ResultValue> retval = null;
-							if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
+							if (paramValues.size()==1 && javaMethod.getParameterCount()==1
+									&& java.util.Collection.class.isAssignableFrom(javaMethod.getParameterTypes()[0])) { 
+								// Measures that count the outcomes of other Tests run on the record act upon
+								// a collection of responses, given in the data as simulated responses
+								// (bdqval:AllValidationTestsRunOnSingleRecord, bdqval:AllAmendmentTestsRunOnSingleRecord).
+								retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, ResponseListParser.parse(paramValues.get(0)));
+							} else if (paramValues.size()==1 && javaMethod.getParameterCount()==1) { 
 								retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0));
 							} else if (paramValues.size()==2 && javaMethod.getParameterCount()==2) { 
 								retval = (DQResponse<ResultValue>)javaMethod.invoke(instance, paramValues.get(0), paramValues.get(1));
