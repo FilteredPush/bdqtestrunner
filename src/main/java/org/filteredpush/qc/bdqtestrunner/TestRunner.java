@@ -1262,20 +1262,13 @@ public class TestRunner {
 							doComparison=false;
 						}
 						if (doComparison) { 
-							boolean sameResultValue = false;
 							if (!expectedResult.equals(resultValue))  {
 								logger.debug(expectedResult);
 								logger.debug(resultValue);
 								// TODO: Handle different order of terms in amendment results.
 								// split and compare list
-							} else { 
-								sameResultValue=true;
 							}
-							if (expectedStatus.equals(resultStatus) && (
-									expectedStatus.equals("INTERNAL_PREREQUISITES_NOT_MET") || 
-									expectedStatus.equals("EXTERNAL_PREREQUISITES_NOT_MET") || 
-									sameResultValue) 
-									) {
+							if (responseMatches(expectedStatus, expectedResult, resultStatus, resultValue)) {
 								StringBuilder message = new StringBuilder()
 										.append(dataID)
 										.append(" #").append(gitHubIssueNo)
@@ -1375,6 +1368,23 @@ public class TestRunner {
 			}
 		}
 		return "";
+	}
+
+	/**
+	 * Whether a Test's Response matches the expected Response in the validation data: the same
+	 * Response.status and the same Response.result. This holds for every status: where the expected
+	 * status is INTERNAL_PREREQUISITES_NOT_MET or EXTERNAL_PREREQUISITES_NOT_MET, the expected result is
+	 * empty, so a Test that returns a value with such a status fails (as a Measure returning
+	 * NOT_REPORTED would).
+	 *
+	 * @param expectedStatus the expected Response.status
+	 * @param expectedResult the expected Response.result, empty for none
+	 * @param resultStatus the Response.status returned
+	 * @param resultValue the Response.result returned, empty for none
+	 * @return true if both match
+	 */
+	static boolean responseMatches(String expectedStatus, String expectedResult, String resultStatus, String resultValue) {
+		return expectedStatus.equals(resultStatus) && expectedResult.equals(resultValue);
 	}
 
 	/**
